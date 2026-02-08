@@ -6,9 +6,6 @@
 
     var entryIndex = 0;
 
-    /**
-     * Initialize when DOM is ready.
-     */
     $(function () {
         initExistingEntries();
         initSortable();
@@ -16,20 +13,12 @@
         initDelegatedEvents();
     });
 
-    /**
-     * Set the initial entry index based on existing entries.
-     */
     function initExistingEntries() {
         var $entries = $('#tpc-entries-list .tpc-entry');
         entryIndex = $entries.length;
-
-        // Start all existing entries collapsed
         $entries.addClass('collapsed');
     }
 
-    /**
-     * Make the entries list sortable via drag and drop.
-     */
     function initSortable() {
         $('#tpc-entries-list').sortable({
             handle: '.tpc-entry-drag',
@@ -41,9 +30,6 @@
         });
     }
 
-    /**
-     * Reindex all entries after reordering.
-     */
     function reindexEntries() {
         $('#tpc-entries-list .tpc-entry').each(function (i) {
             $(this).attr('data-index', i);
@@ -55,9 +41,6 @@
         });
     }
 
-    /**
-     * Add new entry button handler.
-     */
     function initAddEntry() {
         $('#tpc-add-entry').on('click', function () {
             var template = $('#tpc-entry-template').html();
@@ -66,16 +49,12 @@
             $('#tpc-entries-list').append($newEntry);
             entryIndex++;
 
-            // Scroll to the new entry
             $('html, body').animate({
                 scrollTop: $newEntry.offset().top - 50
             }, 300);
         });
     }
 
-    /**
-     * Setup delegated event handlers.
-     */
     function initDelegatedEvents() {
         var $wrap = $('#tpc-comparator-wrap');
 
@@ -100,11 +79,70 @@
         $wrap.on('change', '.tpc-store-select', function () {
             var $entry = $(this).closest('.tpc-entry');
             var selectedText = $(this).find('option:selected').text().trim();
-            if (selectedText && selectedText !== '— Seleccionar tienda —') {
+            if (selectedText && !selectedText.match(/^—/)) {
                 $entry.find('.tpc-entry-title').text(selectedText);
             } else {
                 $entry.find('.tpc-entry-title').text('Nueva tienda');
             }
+        });
+
+        // Test scrape button
+        $wrap.on('click', '.tpc-test-scrape', function () {
+            var $entry = $(this).closest('.tpc-entry');
+            var url = $entry.find('.tpc-affiliate-url').val().trim();
+            var storeSlug = $entry.find('.tpc-store-select').val();
+            var $result = $entry.find('.tpc-scrape-result');
+
+            if (!url || !storeSlug) {
+                $result.html('<span style="color:#dc3232;">Selecciona una tienda e introduce la URL primero.</span>');
+                return;
+            }
+
+            $result.html('<span style="color:#666;">' + tpcAdmin.scraping + '</span>');
+
+            $.post(tpcAdmin.ajaxUrl, {
+                action: 'tpc_test_scrape',
+                nonce: tpcAdmin.nonce,
+                url: url,
+                store_slug: storeSlug
+            }, function (response) {
+                if (response.success) {
+                    var html = '<span style="color:#2e7d32;font-weight:bold;">' + tpcAdmin.scrapeOk + ' ' + response.data.price + ' &euro;</span>';
+                    if (response.data.discount) {
+                        html += ' <span style="background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:3px;font-size:12px;">' + response.data.discount + '</span>';
+                    }
+                    $result.html(html);
+                } else {
+                    $result.html('<span style="color:#dc3232;">' + (response.data || tpcAdmin.scrapeFail) + '</span>');
+                }
+            }).fail(function () {
+                $result.html('<span style="color:#dc3232;">Error de conexión.</span>');
+            });
+        });
+
+        // Refresh all prices button
+        $wrap.on('click', '#tpc-refresh-all-prices', function () {
+            var $btn = $(this);
+            var postId = $btn.data('post-id');
+
+            $btn.prop('disabled', true).text('Refrescando...');
+
+            $.post(tpcAdmin.ajaxUrl, {
+                action: 'tpc_refresh_prices',
+                nonce: tpcAdmin.nonce,
+                post_id: postId
+            }, function (response) {
+                if (response.success) {
+                    // Reload the page to show updated prices in the meta box.
+                    location.reload();
+                } else {
+                    alert(response.data || 'Error al refrescar.');
+                    $btn.prop('disabled', false).html('&#x21bb; Refrescar todos los precios');
+                }
+            }).fail(function () {
+                alert('Error de conexión.');
+                $btn.prop('disabled', false).html('&#x21bb; Refrescar todos los precios');
+            });
         });
     }
 
