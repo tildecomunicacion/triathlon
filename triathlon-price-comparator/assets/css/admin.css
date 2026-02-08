@@ -1,0 +1,115 @@
+/* Triathlon Price Comparator - Admin Styles */
+
+#tpc-comparator-wrap .description {
+    margin-bottom: 15px;
+}
+
+#tpc-comparator-wrap .tpc-notice {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+}
+
+/* Entry card */
+.tpc-entry {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.tpc-entry-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #ccd0d4;
+    cursor: pointer;
+    gap: 8px;
+}
+
+.tpc-entry-drag {
+    cursor: move;
+    color: #999;
+}
+
+.tpc-entry-title {
+    flex: 1;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.tpc-entry-toggle,
+.tpc-entry-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #999;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.tpc-entry-remove {
+    color: #a00;
+}
+
+.tpc-entry-remove:hover {
+    color: #dc3232;
+}
+
+/* Entry body */
+.tpc-entry-body {
+    padding: 15px;
+}
+
+.tpc-entry.collapsed .tpc-entry-body {
+    display: none;
+}
+
+.tpc-entry.collapsed .tpc-entry-toggle {
+    transform: rotate(-90deg);
+}
+
+/* Fields table */
+.tpc-entry-fields {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tpc-entry-fields th {
+    text-align: left;
+    padding: 8px 10px 8px 0;
+    width: 140px;
+    vertical-align: top;
+    font-weight: 500;
+}
+
+.tpc-entry-fields td {
+    padding: 6px 0;
+}
+
+.tpc-entry-fields .small-text {
+    width: 100px;
+}
+
+.tpc-entry-fields .description {
+    color: #666;
+    font-size: 12px;
+    margin-left: 6px;
+}
+
+/* Sortable placeholder */
+.tpc-entry.ui-sortable-placeholder {
+    border: 2px dashed #b4b9be;
+    background: #f9f9f9;
+    visibility: visible !important;
+    height: 50px;
+}
+
+/* Add button */
+#tpc-add-entry {
+    margin-top: 10px;
+    font-size: 13px;
+}
