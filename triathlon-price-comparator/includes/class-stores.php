@@ -1,6 +1,7 @@
 <?php
 /**
- * Manages the store registry for the price comparator.
+ * Store registry with pre-configured stores.
+ * CSS selectors are optional — the scraper auto-detects prices.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,9 +12,31 @@ class TPC_Stores {
 
     const OPTION_KEY = 'tpc_stores';
 
+    /**
+     * Pre-configured stores (name + default selector as extra safety net).
+     */
+    private static $presets = array(
+        'alltricks'       => array( 'name' => 'Alltricks' ),
+        'top4running'     => array( 'name' => 'Top4Running' ),
+        'running-emotion' => array( 'name' => 'Running Emotion' ),
+        'runnea'          => array( 'name' => 'Runnea' ),
+        'deporvillage'    => array( 'name' => 'Deporvillage' ),
+        'tradeinn'        => array( 'name' => 'Tradeinn' ),
+        'wiggle'          => array( 'name' => 'Wiggle' ),
+        'chain-reaction'  => array( 'name' => 'Chain Reaction Cycles' ),
+        'amazon'          => array( 'name' => 'Amazon' ),
+        'decathlon'       => array( 'name' => 'Decathlon' ),
+        'bike-inn'        => array( 'name' => 'BikeInn' ),
+        'swim-inn'        => array( 'name' => 'SwimInn' ),
+        'run-inn'         => array( 'name' => 'RunnerInn' ),
+        'sportshoes'      => array( 'name' => 'SportsShoes' ),
+        'i-run'           => array( 'name' => 'i-Run' ),
+        'ekosport'        => array( 'name' => 'Ekosport' ),
+        'lepape'          => array( 'name' => 'LePape' ),
+    );
+
     public static function init() {
         add_action( 'admin_menu', array( __CLASS__, 'add_menu_page' ) );
-        add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
         add_action( 'wp_ajax_tpc_add_store', array( __CLASS__, 'ajax_add_store' ) );
         add_action( 'wp_ajax_tpc_delete_store', array( __CLASS__, 'ajax_delete_store' ) );
     }
@@ -28,32 +51,20 @@ class TPC_Stores {
         );
     }
 
-    public static function register_settings() {
-        register_setting( 'tpc_stores_group', self::OPTION_KEY );
-    }
-
-    /**
-     * Get all registered stores.
-     */
     public static function get_stores() {
         $stores = get_option( self::OPTION_KEY, array() );
-        if ( ! is_array( $stores ) ) {
-            $stores = array();
-        }
-        return $stores;
+        return is_array( $stores ) ? $stores : array();
     }
 
-    /**
-     * Get a single store by slug.
-     */
     public static function get_store( $slug ) {
         $stores = self::get_stores();
         return isset( $stores[ $slug ] ) ? $stores[ $slug ] : null;
     }
 
-    /**
-     * AJAX: add a store.
-     */
+    public static function get_presets() {
+        return self::$presets;
+    }
+
     public static function ajax_add_store() {
         check_ajax_referer( 'tpc_stores_nonce', 'nonce' );
 
@@ -61,50 +72,34 @@ class TPC_Stores {
             wp_send_json_error( 'No tienes permisos.' );
         }
 
-        $name                   = sanitize_text_field( wp_unslash( $_POST['store_name'] ?? '' ) );
-        $logo_id                = absint( $_POST['store_logo_id'] ?? 0 );
-        $price_selector         = sanitize_text_field( wp_unslash( $_POST['price_selector'] ?? '' ) );
-        $original_price_selector = sanitize_text_field( wp_unslash( $_POST['original_price_selector'] ?? '' ) );
-        $cache_hours            = absint( $_POST['cache_hours'] ?? 6 );
-        $default_shipping       = sanitize_text_field( wp_unslash( $_POST['default_shipping'] ?? 'Envío gratuito' ) );
+        $name        = sanitize_text_field( wp_unslash( $_POST['store_name'] ?? '' ) );
+        $logo_id     = absint( $_POST['store_logo_id'] ?? 0 );
+        $cache_hours = absint( $_POST['cache_hours'] ?? 6 );
+        $shipping    = sanitize_text_field( wp_unslash( $_POST['default_shipping'] ?? 'Envío gratuito' ) );
 
         if ( empty( $name ) ) {
             wp_send_json_error( 'El nombre es obligatorio.' );
         }
-        if ( empty( $price_selector ) ) {
-            wp_send_json_error( 'El selector CSS del precio es obligatorio.' );
-        }
 
-        $stores    = self::get_stores();
-        $slug      = sanitize_title( $name );
-        $logo_url  = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : '';
-
-        if ( $cache_hours < 1 ) {
-            $cache_hours = 6;
-        }
+        $stores   = self::get_stores();
+        $slug     = sanitize_title( $name );
+        $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : '';
 
         $stores[ $slug ] = array(
-            'name'                    => $name,
-            'slug'                    => $slug,
-            'logo_id'                 => $logo_id,
-            'logo_url'                => $logo_url,
-            'price_selector'          => $price_selector,
-            'original_price_selector' => $original_price_selector,
-            'cache_hours'             => $cache_hours,
-            'default_shipping'        => $default_shipping,
+            'name'             => $name,
+            'slug'             => $slug,
+            'logo_id'          => $logo_id,
+            'logo_url'         => $logo_url,
+            'cache_hours'      => max( 1, $cache_hours ),
+            'default_shipping' => $shipping,
+            'price_selector'          => '',
+            'original_price_selector' => '',
         );
 
         update_option( self::OPTION_KEY, $stores );
-
-        wp_send_json_success( array(
-            'store'  => $stores[ $slug ],
-            'stores' => $stores,
-        ) );
+        wp_send_json_success( array( 'stores' => $stores ) );
     }
 
-    /**
-     * AJAX: delete a store.
-     */
     public static function ajax_delete_store() {
         check_ajax_referer( 'tpc_stores_nonce', 'nonce' );
 
@@ -123,63 +118,70 @@ class TPC_Stores {
         wp_send_json_success( array( 'stores' => $stores ) );
     }
 
-    /**
-     * Render settings page.
-     */
     public static function render_settings_page() {
-        $stores = self::get_stores();
-        $nonce  = wp_create_nonce( 'tpc_stores_nonce' );
+        $stores  = self::get_stores();
+        $presets = self::get_presets();
+        $nonce   = wp_create_nonce( 'tpc_stores_nonce' );
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Tiendas del Comparador de Precios', 'triathlon-price-comparator' ); ?></h1>
-            <p><?php esc_html_e( 'Configura las tiendas con sus selectores CSS para extraer precios automáticamente.', 'triathlon-price-comparator' ); ?></p>
+            <p><?php esc_html_e( 'Añade las tiendas que usas. Solo necesitas el nombre y el logo. El precio se extrae automáticamente de la URL del producto.', 'triathlon-price-comparator' ); ?></p>
 
-            <div id="tpc-stores-list" style="margin-bottom: 30px;">
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th style="width:70px;"><?php esc_html_e( 'Logo', 'triathlon-price-comparator' ); ?></th>
-                            <th><?php esc_html_e( 'Nombre', 'triathlon-price-comparator' ); ?></th>
-                            <th><?php esc_html_e( 'Selector precio', 'triathlon-price-comparator' ); ?></th>
-                            <th><?php esc_html_e( 'Selector precio original', 'triathlon-price-comparator' ); ?></th>
-                            <th style="width:60px;"><?php esc_html_e( 'Cache (h)', 'triathlon-price-comparator' ); ?></th>
-                            <th style="width:90px;"><?php esc_html_e( 'Acciones', 'triathlon-price-comparator' ); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody id="tpc-stores-tbody">
-                        <?php if ( empty( $stores ) ) : ?>
-                            <tr class="tpc-no-stores">
-                                <td colspan="6"><?php esc_html_e( 'No hay tiendas registradas.', 'triathlon-price-comparator' ); ?></td>
+            <table class="wp-list-table widefat fixed striped" style="margin-bottom:30px;">
+                <thead>
+                    <tr>
+                        <th style="width:70px;"><?php esc_html_e( 'Logo', 'triathlon-price-comparator' ); ?></th>
+                        <th><?php esc_html_e( 'Nombre', 'triathlon-price-comparator' ); ?></th>
+                        <th style="width:100px;"><?php esc_html_e( 'Cache (h)', 'triathlon-price-comparator' ); ?></th>
+                        <th style="width:120px;"><?php esc_html_e( 'Envío', 'triathlon-price-comparator' ); ?></th>
+                        <th style="width:90px;"><?php esc_html_e( 'Acciones', 'triathlon-price-comparator' ); ?></th>
+                    </tr>
+                </thead>
+                <tbody id="tpc-stores-tbody">
+                    <?php if ( empty( $stores ) ) : ?>
+                        <tr class="tpc-no-stores"><td colspan="5"><?php esc_html_e( 'No hay tiendas registradas. Añade una abajo.', 'triathlon-price-comparator' ); ?></td></tr>
+                    <?php else : ?>
+                        <?php foreach ( $stores as $store ) : ?>
+                            <tr>
+                                <td>
+                                    <?php if ( ! empty( $store['logo_url'] ) ) : ?>
+                                        <img src="<?php echo esc_url( $store['logo_url'] ); ?>" alt="" style="max-width:60px;max-height:30px;">
+                                    <?php else : ?>
+                                        —
+                                    <?php endif; ?>
+                                </td>
+                                <td><strong><?php echo esc_html( $store['name'] ); ?></strong></td>
+                                <td><?php echo esc_html( $store['cache_hours'] ?? 6 ); ?>h</td>
+                                <td><?php echo esc_html( $store['default_shipping'] ?? '' ); ?></td>
+                                <td>
+                                    <button type="button" class="button button-small tpc-delete-store" data-slug="<?php echo esc_attr( $store['slug'] ); ?>">
+                                        <?php esc_html_e( 'Eliminar', 'triathlon-price-comparator' ); ?>
+                                    </button>
+                                </td>
                             </tr>
-                        <?php else : ?>
-                            <?php foreach ( $stores as $store ) : ?>
-                                <tr data-slug="<?php echo esc_attr( $store['slug'] ); ?>">
-                                    <td>
-                                        <?php if ( ! empty( $store['logo_url'] ) ) : ?>
-                                            <img src="<?php echo esc_url( $store['logo_url'] ); ?>" alt="" style="max-width:60px;max-height:30px;">
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><strong><?php echo esc_html( $store['name'] ); ?></strong></td>
-                                    <td><code><?php echo esc_html( $store['price_selector'] ?? '' ); ?></code></td>
-                                    <td><code><?php echo esc_html( $store['original_price_selector'] ?? '—' ); ?></code></td>
-                                    <td><?php echo esc_html( $store['cache_hours'] ?? 6 ); ?></td>
-                                    <td>
-                                        <button type="button" class="button button-small tpc-delete-store" data-slug="<?php echo esc_attr( $store['slug'] ); ?>">
-                                            <?php esc_html_e( 'Eliminar', 'triathlon-price-comparator' ); ?>
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
 
-            <h2><?php esc_html_e( 'Añadir nueva tienda', 'triathlon-price-comparator' ); ?></h2>
+            <h2><?php esc_html_e( 'Añadir tienda', 'triathlon-price-comparator' ); ?></h2>
             <table class="form-table">
                 <tr>
-                    <th><label for="tpc-new-store-name"><?php esc_html_e( 'Nombre', 'triathlon-price-comparator' ); ?></label></th>
-                    <td><input type="text" id="tpc-new-store-name" class="regular-text" placeholder="Ej: Alltricks"></td>
+                    <th><label><?php esc_html_e( 'Tienda', 'triathlon-price-comparator' ); ?></label></th>
+                    <td>
+                        <select id="tpc-preset-select">
+                            <option value=""><?php esc_html_e( '— Seleccionar tienda conocida —', 'triathlon-price-comparator' ); ?></option>
+                            <?php foreach ( $presets as $slug => $preset ) : ?>
+                                <?php if ( ! isset( $stores[ $slug ] ) ) : ?>
+                                    <option value="<?php echo esc_attr( $preset['name'] ); ?>">
+                                        <?php echo esc_html( $preset['name'] ); ?>
+                                    </option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <option value="__custom__"><?php esc_html_e( '— Otra tienda (escribir nombre) —', 'triathlon-price-comparator' ); ?></option>
+                        </select>
+                        <input type="text" id="tpc-new-store-name" class="regular-text" placeholder="Nombre de la tienda" style="display:none;margin-top:8px;">
+                    </td>
                 </tr>
                 <tr>
                     <th><label><?php esc_html_e( 'Logo', 'triathlon-price-comparator' ); ?></label></th>
@@ -191,32 +193,13 @@ class TPC_Stores {
                     </td>
                 </tr>
                 <tr>
-                    <th><label for="tpc-new-price-selector"><?php esc_html_e( 'Selector CSS del precio', 'triathlon-price-comparator' ); ?></label></th>
-                    <td>
-                        <input type="text" id="tpc-new-price-selector" class="regular-text" placeholder="Ej: .product-price .current-price, span.price">
-                        <p class="description">
-                            <?php esc_html_e( 'Selector CSS que apunta al elemento HTML que contiene el precio en la página del producto. Usa el inspector del navegador para encontrarlo.', 'triathlon-price-comparator' ); ?>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label for="tpc-new-original-price-selector"><?php esc_html_e( 'Selector precio original (opcional)', 'triathlon-price-comparator' ); ?></label></th>
-                    <td>
-                        <input type="text" id="tpc-new-original-price-selector" class="regular-text" placeholder="Ej: .product-price .old-price, span.was-price">
-                        <p class="description">
-                            <?php esc_html_e( 'Para calcular el % de descuento automáticamente. Si no lo pones, no se mostrará descuento.', 'triathlon-price-comparator' ); ?>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label for="tpc-new-default-shipping"><?php esc_html_e( 'Texto de envío por defecto', 'triathlon-price-comparator' ); ?></label></th>
+                    <th><label for="tpc-new-default-shipping"><?php esc_html_e( 'Texto de envío', 'triathlon-price-comparator' ); ?></label></th>
                     <td><input type="text" id="tpc-new-default-shipping" class="regular-text" value="Envío gratuito"></td>
                 </tr>
                 <tr>
-                    <th><label for="tpc-new-cache-hours"><?php esc_html_e( 'Horas de caché', 'triathlon-price-comparator' ); ?></label></th>
+                    <th><label for="tpc-new-cache-hours"><?php esc_html_e( 'Refrescar precio cada', 'triathlon-price-comparator' ); ?></label></th>
                     <td>
-                        <input type="number" id="tpc-new-cache-hours" class="small-text" value="6" min="1" max="72">
-                        <p class="description"><?php esc_html_e( 'Cada cuántas horas se re-consulta el precio de esta tienda.', 'triathlon-price-comparator' ); ?></p>
+                        <input type="number" id="tpc-new-cache-hours" class="small-text" value="6" min="1" max="72"> horas
                     </td>
                 </tr>
             </table>
@@ -232,6 +215,17 @@ class TPC_Stores {
         jQuery(function($) {
             var nonce = $('#tpc-stores-nonce').val();
 
+            // Preset selector
+            $('#tpc-preset-select').on('change', function() {
+                var val = $(this).val();
+                if (val === '__custom__') {
+                    $('#tpc-new-store-name').show().focus();
+                } else {
+                    $('#tpc-new-store-name').hide().val('');
+                }
+            });
+
+            // Logo upload
             $('#tpc-new-store-logo-btn').on('click', function(e) {
                 e.preventDefault();
                 var frame = wp.media({ title: 'Seleccionar logo', button: { text: 'Usar este logo' }, multiple: false, library: { type: 'image' } });
@@ -244,44 +238,40 @@ class TPC_Stores {
                 });
                 frame.open();
             });
-
             $('#tpc-new-store-logo-remove').on('click', function() {
                 $('#tpc-new-store-logo-id').val('');
                 $('#tpc-new-store-logo-preview').html('');
                 $(this).hide();
             });
 
+            // Add store
             $('#tpc-add-store-btn').on('click', function() {
-                var name = $('#tpc-new-store-name').val().trim();
-                var priceSelector = $('#tpc-new-price-selector').val().trim();
+                var presetVal = $('#tpc-preset-select').val();
+                var name = presetVal === '__custom__' ? $('#tpc-new-store-name').val().trim() : presetVal;
 
-                if (!name) { alert('Introduce el nombre de la tienda.'); return; }
-                if (!priceSelector) { alert('El selector CSS del precio es obligatorio.'); return; }
+                if (!name) { alert('Selecciona o escribe el nombre de la tienda.'); return; }
 
                 $.post(ajaxurl, {
                     action: 'tpc_add_store',
                     nonce: nonce,
                     store_name: name,
                     store_logo_id: $('#tpc-new-store-logo-id').val(),
-                    price_selector: priceSelector,
-                    original_price_selector: $('#tpc-new-original-price-selector').val().trim(),
                     default_shipping: $('#tpc-new-default-shipping').val().trim(),
                     cache_hours: $('#tpc-new-cache-hours').val()
-                }, function(response) {
-                    if (response.success) { location.reload(); }
-                    else { alert(response.data); }
+                }, function(r) {
+                    if (r.success) location.reload();
+                    else alert(r.data);
                 });
             });
 
+            // Delete
             $(document).on('click', '.tpc-delete-store', function() {
                 if (!confirm('¿Eliminar esta tienda?')) return;
                 $.post(ajaxurl, {
                     action: 'tpc_delete_store',
                     nonce: nonce,
                     store_slug: $(this).data('slug')
-                }, function(response) {
-                    if (response.success) location.reload();
-                });
+                }, function(r) { if (r.success) location.reload(); });
             });
         });
         </script>
