@@ -32,6 +32,86 @@ class TPC_Scraper {
     }
 
     /**
+     * Resolve affiliate/redirect URLs to the real product URL.
+     *
+     * Supports: AWIN, Tradedoubler, TradeTracker, CJ, ShareASale,
+     * Webgains, Rakuten, and generic redirect parameters.
+     */
+    public static function resolve_affiliate_url( $url ) {
+        $parsed = wp_parse_url( $url );
+        $host   = isset( $parsed['host'] ) ? strtolower( $parsed['host'] ) : '';
+        $query  = array();
+
+        if ( ! empty( $parsed['query'] ) ) {
+            parse_str( $parsed['query'], $query );
+        }
+
+        // AWIN (awin1.com) — real URL in "ued" parameter.
+        if ( strpos( $host, 'awin1.com' ) !== false ) {
+            if ( ! empty( $query['ued'] ) ) {
+                return urldecode( $query['ued'] );
+            }
+        }
+
+        // Tradedoubler — real URL in "url" parameter.
+        if ( strpos( $host, 'tradedoubler.com' ) !== false ) {
+            if ( ! empty( $query['url'] ) ) {
+                return urldecode( $query['url'] );
+            }
+        }
+
+        // TradeTracker — real URL in "r" or "url" parameter.
+        if ( strpos( $host, 'tradetracker.' ) !== false ) {
+            foreach ( array( 'r', 'url' ) as $param ) {
+                if ( ! empty( $query[ $param ] ) ) {
+                    return urldecode( $query[ $param ] );
+                }
+            }
+        }
+
+        // CJ (Commission Junction) — real URL in "url" parameter.
+        if ( strpos( $host, 'anrdoezrs.net' ) !== false || strpos( $host, 'dpbolvw.net' ) !== false || strpos( $host, 'jdoqocy.com' ) !== false ) {
+            if ( ! empty( $query['url'] ) ) {
+                return urldecode( $query['url'] );
+            }
+        }
+
+        // ShareASale — real URL in "urllink" parameter.
+        if ( strpos( $host, 'shareasale.com' ) !== false ) {
+            if ( ! empty( $query['urllink'] ) ) {
+                return urldecode( $query['urllink'] );
+            }
+        }
+
+        // Webgains — real URL in "wgtarget" parameter.
+        if ( strpos( $host, 'webgains.' ) !== false ) {
+            if ( ! empty( $query['wgtarget'] ) ) {
+                return urldecode( $query['wgtarget'] );
+            }
+        }
+
+        // Rakuten / LinkShare — real URL in "murl" parameter.
+        if ( strpos( $host, 'click.linksynergy.com' ) !== false ) {
+            if ( ! empty( $query['murl'] ) ) {
+                return urldecode( $query['murl'] );
+            }
+        }
+
+        // Generic: try common redirect parameters.
+        foreach ( array( 'url', 'redirect', 'dest', 'destination', 'target', 'goto', 'link' ) as $param ) {
+            if ( ! empty( $query[ $param ] ) ) {
+                $candidate = urldecode( $query[ $param ] );
+                if ( filter_var( $candidate, FILTER_VALIDATE_URL ) ) {
+                    return $candidate;
+                }
+            }
+        }
+
+        // Not an affiliate URL or unknown format — use as is.
+        return $url;
+    }
+
+    /**
      * Force-refresh the price.
      */
     public static function refresh_price( $url, $store_slug ) {
@@ -40,7 +120,10 @@ class TPC_Scraper {
             return null;
         }
 
-        $html = self::fetch_html( $url );
+        // Resolve affiliate URL to the real product page.
+        $product_url = self::resolve_affiliate_url( $url );
+
+        $html = self::fetch_html( $product_url );
         if ( ! $html ) {
             return null;
         }
@@ -98,10 +181,19 @@ class TPC_Scraper {
             $discount = '-' . $pct . '%';
         }
 
+        // Extract product image.
+        $image = self::extract_product_image( $html );
+
+        // Extract product name.
+        $product_name = self::extract_product_name( $html );
+
         $data = array(
             'price'          => $price,
             'original_price' => $original_price,
             'discount'       => $discount,
+            'image'          => $image,
+            'product_name'   => $product_name,
+            'product_url'    => $product_url,
             'method'         => $method,
             'fetched_at'     => time(),
         );
@@ -246,6 +338,77 @@ class TPC_Scraper {
             'price'          => $price,
             'original_price' => null,
         );
+    }
+
+    /**
+     * Extract product image URL from HTML.
+     */
+    private static function extract_product_image( $html ) {
+        // 1. JSON-LD image.
+        if ( preg_match_all( '/<script[^>]*type=["\']application\/ld\+json["\'][^>]*>(.*?)<\/script>/si', $html, $matches ) ) {
+            foreach ( $matches[1] as $json_str ) {
+                $data = json_decode( trim( $json_str ), true );
+                if ( ! $data ) continue;
+
+                $items = isset( $data['@graph'] ) ? $data['@graph'] : array( $data );
+                foreach ( $items as $item ) {
+                    $type = $item['@type'] ?? '';
+                    if ( in_array( $type, array( 'Product', 'IndividualProduct', 'ProductModel' ), true ) ) {
+                        $img = $item['image'] ?? null;
+                        if ( is_array( $img ) ) {
+                            $img = $img[0] ?? ( $img['url'] ?? null );
+                        }
+                        if ( $img && filter_var( $img, FILTER_VALIDATE_URL ) ) {
+                            return $img;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Open Graph image.
+        if ( preg_match( '/<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)/i', $html, $m ) ) {
+            if ( filter_var( $m[1], FILTER_VALIDATE_URL ) ) {
+                return $m[1];
+            }
+        }
+        if ( preg_match( '/<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image/i', $html, $m ) ) {
+            if ( filter_var( $m[1], FILTER_VALIDATE_URL ) ) {
+                return $m[1];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract product name from HTML.
+     */
+    private static function extract_product_name( $html ) {
+        // 1. JSON-LD name.
+        if ( preg_match_all( '/<script[^>]*type=["\']application\/ld\+json["\'][^>]*>(.*?)<\/script>/si', $html, $matches ) ) {
+            foreach ( $matches[1] as $json_str ) {
+                $data = json_decode( trim( $json_str ), true );
+                if ( ! $data ) continue;
+
+                $items = isset( $data['@graph'] ) ? $data['@graph'] : array( $data );
+                foreach ( $items as $item ) {
+                    $type = $item['@type'] ?? '';
+                    if ( in_array( $type, array( 'Product', 'IndividualProduct', 'ProductModel' ), true ) ) {
+                        if ( ! empty( $item['name'] ) ) {
+                            return sanitize_text_field( $item['name'] );
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. og:title.
+        if ( preg_match( '/<meta[^>]+property=["\']og:title["\'][^>]+content=["\']([^"\']+)/i', $html, $m ) ) {
+            return sanitize_text_field( $m[1] );
+        }
+
+        return null;
     }
 
     /**
