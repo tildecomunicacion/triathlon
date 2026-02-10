@@ -71,36 +71,34 @@
 
     // Test scrape
     $(document).on('click', '.tpc-test-scrape', function () {
-        var $btn = $(this);
-        // Walk up to the table, then search within it
-        var $table = $btn.closest('table.tpc-entry-fields');
-        var $entry = $btn.closest('.tpc-entry');
+        var btn = this;
+        var entry = btn.closest('.tpc-entry');
+        var url = '';
+        var storeSlug = '';
 
-        // Try multiple ways to find the elements
-        var $urlInput = $table.find('input[type="url"]');
-        var $storeSelect = $table.find('select');
-        var url = $urlInput.length ? $urlInput.val() : '';
-        var storeSlug = $storeSelect.length ? $storeSelect.val() : '';
+        if (entry) {
+            // Use native DOM — more reliable than jQuery in Gutenberg
+            var urlInput = entry.querySelector('input[type="url"]');
+            var selectEl = entry.querySelector('select');
 
-        // Fallback: search within .tpc-entry
-        if (!url && $entry.length) {
-            url = $entry.find('input[type="url"]').val() || '';
+            url = urlInput ? urlInput.value : '';
+            storeSlug = selectEl ? selectEl.value : '';
+
+            // If select.value is empty but has a selected option, read it directly
+            if (!storeSlug && selectEl && selectEl.selectedIndex > 0) {
+                storeSlug = selectEl.options[selectEl.selectedIndex].value;
+            }
         }
-        if (!storeSlug && $entry.length) {
-            storeSlug = $entry.find('select').first().val() || '';
-        }
 
-        var $result = $btn.siblings('.tpc-scrape-result');
+        var $result = $(btn).siblings('.tpc-scrape-result');
         if (!$result.length) {
-            $result = $btn.parent().find('.tpc-scrape-result');
+            $result = $(btn).parent().find('.tpc-scrape-result');
         }
 
-        console.log('TPC Debug: url="' + url + '", storeSlug="' + storeSlug + '"');
-        console.log('TPC Debug: $table found=' + $table.length + ', $entry found=' + $entry.length);
-        console.log('TPC Debug: $urlInput found=' + $urlInput.length + ', $storeSelect found=' + $storeSelect.length);
+        console.log('TPC Debug:', { url: url, storeSlug: storeSlug, entry: !!entry });
 
         if (!url || !storeSlug) {
-            $result.html('<span style="color:#dc3232;">Selecciona una tienda e introduce la URL primero. (debug: url=' + (url ? 'OK' : 'VACÍO') + ', tienda=' + (storeSlug ? 'OK' : 'VACÍO') + ')</span>');
+            $result.html('<span style="color:#dc3232;">Error: url=' + (url ? 'OK' : 'VACÍO') + ', tienda=' + (storeSlug || 'VACÍO') + '</span>');
             return;
         }
 
