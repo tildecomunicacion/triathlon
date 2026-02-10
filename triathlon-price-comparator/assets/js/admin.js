@@ -1,5 +1,5 @@
 /**
- * Triathlon Price Comparator - Admin JavaScript
+ * Triathlon Price Comparator - Admin JavaScript v2.1.0
  * Uses $(document) for event delegation to work with Gutenberg.
  */
 (function ($) {
@@ -31,23 +31,23 @@
         });
     }
 
-    // All events delegated from document so they work even if
-    // the meta box is loaded after the script (Gutenberg).
-
+    // Add entry
     $(document).on('click', '#tpc-add-entry', function () {
         var template = $('#tpc-entry-template').html();
-        template = template.replace(/\{\{INDEX\}\}/g, entryIndex);
-        var $newEntry = $(template);
+        template = template.replace(/\{\{INDEX\}\}/g, String(entryIndex));
+        var $newEntry = $($.parseHTML(template.trim()));
         $('#tpc-entries-list').append($newEntry);
         entryIndex++;
         $('html, body').animate({ scrollTop: $newEntry.offset().top - 50 }, 300);
     });
 
+    // Toggle collapse
     $(document).on('click', '.tpc-entry-toggle, .tpc-entry-title', function (e) {
         e.stopPropagation();
         $(this).closest('.tpc-entry').toggleClass('collapsed');
     });
 
+    // Remove entry
     $(document).on('click', '.tpc-entry-remove', function (e) {
         e.stopPropagation();
         if (confirm(tpcAdmin.confirmRemove)) {
@@ -58,6 +58,7 @@
         }
     });
 
+    // Update title on store change
     $(document).on('change', '.tpc-store-select', function () {
         var $entry = $(this).closest('.tpc-entry');
         var selectedText = $(this).find('option:selected').text().trim();
@@ -68,14 +69,38 @@
         }
     });
 
+    // Test scrape
     $(document).on('click', '.tpc-test-scrape', function () {
-        var $entry = $(this).closest('.tpc-entry');
-        var url = $entry.find('.tpc-affiliate-url').val();
-        var storeSlug = $entry.find('.tpc-store-select').val();
-        var $result = $entry.find('.tpc-scrape-result');
+        var $btn = $(this);
+        // Walk up to the table, then search within it
+        var $table = $btn.closest('table.tpc-entry-fields');
+        var $entry = $btn.closest('.tpc-entry');
+
+        // Try multiple ways to find the elements
+        var $urlInput = $table.find('input[type="url"]');
+        var $storeSelect = $table.find('select');
+        var url = $urlInput.length ? $urlInput.val() : '';
+        var storeSlug = $storeSelect.length ? $storeSelect.val() : '';
+
+        // Fallback: search within .tpc-entry
+        if (!url && $entry.length) {
+            url = $entry.find('input[type="url"]').val() || '';
+        }
+        if (!storeSlug && $entry.length) {
+            storeSlug = $entry.find('select').first().val() || '';
+        }
+
+        var $result = $btn.siblings('.tpc-scrape-result');
+        if (!$result.length) {
+            $result = $btn.parent().find('.tpc-scrape-result');
+        }
+
+        console.log('TPC Debug: url="' + url + '", storeSlug="' + storeSlug + '"');
+        console.log('TPC Debug: $table found=' + $table.length + ', $entry found=' + $entry.length);
+        console.log('TPC Debug: $urlInput found=' + $urlInput.length + ', $storeSelect found=' + $storeSelect.length);
 
         if (!url || !storeSlug) {
-            $result.html('<span style="color:#dc3232;">Selecciona una tienda e introduce la URL primero.</span>');
+            $result.html('<span style="color:#dc3232;">Selecciona una tienda e introduce la URL primero. (debug: url=' + (url ? 'OK' : 'VACÍO') + ', tienda=' + (storeSlug ? 'OK' : 'VACÍO') + ')</span>');
             return;
         }
 
@@ -101,6 +126,7 @@
         });
     });
 
+    // Refresh all prices
     $(document).on('click', '#tpc-refresh-all-prices', function () {
         var $btn = $(this);
         var postId = $btn.data('post-id');
