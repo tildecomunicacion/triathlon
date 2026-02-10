@@ -34,7 +34,10 @@ add_action( 'plugins_loaded', 'tpc_init' );
  * Enqueue admin assets on post edit screens.
  */
 function tpc_admin_assets( $hook ) {
-    if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+    $is_post_edit  = in_array( $hook, array( 'post.php', 'post-new.php' ), true );
+    $is_stores_page = ( 'settings_page_tpc-stores' === $hook );
+
+    if ( ! $is_post_edit && ! $is_stores_page ) {
         return;
     }
 
