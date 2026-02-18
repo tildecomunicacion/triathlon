@@ -59,6 +59,7 @@
         <div class="tabs">
             <button class="tab active" onclick="showTab('samples')">Ejemplos locales</button>
             <button class="tab" onclick="showTab('paste')">Pegar HTML de tienda</button>
+            <button class="tab" onclick="showTab('awin')">Probar URL de afiliado</button>
         </div>
 
         <!-- Tab 1: Samples -->
@@ -79,6 +80,20 @@
             </div>
             <textarea id="pasteHtml" placeholder="Pega aqui el codigo fuente HTML de la pagina de producto..." style="margin-top:12px;"></textarea>
             <button class="btn-green" onclick="analyzePasted()" style="margin-top:10px;">Analizar HTML</button>
+        </div>
+
+        <!-- Tab 3: AWIN URL resolver -->
+        <div class="card tab-content" id="tab-awin">
+            <h2>Probar resolucion de URL de afiliado</h2>
+            <div class="howto">
+                <strong>Pega aqui una URL de AWIN, Tradedoubler, etc.</strong> y el sistema extraera la URL real del producto.<br>
+                Ejemplo AWIN: <code>https://www.awin1.com/cread.php?awinmid=12345&p=https%3A%2F%2Fwww.nike.com%2Fes%2Ft%2Fpegasus-41&ued=https%3A%2F%2Fwww.nike.com%2Fes%2Ft%2Fpegasus-41</code>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:12px;">
+                <input type="url" id="awinUrl" placeholder="https://www.awin1.com/cread.php?..." style="flex:1;padding:12px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:15px;outline:none;">
+                <button onclick="testAwinUrl()">Resolver URL</button>
+            </div>
+            <div id="awinResult" style="margin-top:12px;display:none;"></div>
         </div>
 
         <!-- Result -->
@@ -583,6 +598,47 @@
         card.innerHTML = `<div class="name">${esc(name)}</div><div class="file">${esc(sample.desc)}</div>`;
         card.onclick = () => testSample(name);
         grid.appendChild(card);
+    }
+
+    function testAwinUrl() {
+        const url = document.getElementById('awinUrl').value.trim();
+        const el = document.getElementById('awinResult');
+        if (!url) { alert('Pega una URL de afiliado primero.'); return; }
+        el.style.display = 'block';
+
+        const resolved = resolveAffiliateUrl(url);
+        const changed = resolved !== url;
+
+        let html = `<dl class="urls-info">
+            <dt>URL original:</dt><dd>${esc(url)}</dd>
+            <dt>URL resuelta:</dt><dd style="color:${changed ? '#16a34a' : '#6b7280'};font-weight:${changed ? '600' : '400'}">${esc(resolved)}</dd>
+        </dl>`;
+
+        if (changed) {
+            html += `<div style="background:#dcfce7;color:#16a34a;padding:12px;border-radius:8px;font-weight:600;">
+                URL de afiliado detectada y resuelta correctamente.
+                <br><small style="font-weight:400;color:#166534;">En WordPress, el plugin usara esta URL resuelta para descargar la pagina y extraer el precio.</small>
+            </div>`;
+        } else {
+            html += `<div style="background:#fffbeb;border:1px solid #fed7aa;color:#92400e;padding:12px;border-radius:8px;">
+                No se detecto plataforma de afiliacion conocida. Se usara la URL tal cual (puede que sea una URL directa de producto, que esta bien).
+            </div>`;
+        }
+
+        // Show all detected parameters
+        try {
+            const u = new URL(url);
+            const params = {};
+            u.searchParams.forEach((v, k) => { params[k] = v; });
+            if (Object.keys(params).length > 0) {
+                html += `<details class="debug" style="margin-top:12px;">
+                    <summary>Parametros de la URL</summary>
+                    <pre>${esc(JSON.stringify(params, null, 2))}</pre>
+                </details>`;
+            }
+        } catch(e) {}
+
+        el.innerHTML = html;
     }
     </script>
 </body>
