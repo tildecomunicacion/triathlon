@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Scraper — Triathlon Price Comparator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a1a; padding: 20px; }
+        .container { max-width: 960px; margin: 0 auto; }
+        h1 { font-size: 22px; margin-bottom: 4px; }
+        .subtitle { color: #666; margin-bottom: 20px; font-size: 14px; }
+        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.1); margin-bottom: 20px; }
+        .card h2 { font-size: 16px; margin-bottom: 12px; color: #374151; }
+        button { padding: 10px 20px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+        .btn-green { background: #16a34a; }
+        .btn-green:hover { background: #15803d; }
+        .samples-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .sample-card { display: block; padding: 14px; background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: all .15s; }
+        .sample-card:hover { border-color: #2563eb; background: #eff6ff; }
+        .sample-card .name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .sample-card .file { font-size: 11px; color: #9ca3af; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+        .tab { padding: 8px 16px; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 14px; font-weight: 500; background: #e5e7eb; color: #6b7280; border: none; }
+        .tab.active { background: #fff; color: #1a1a1a; box-shadow: 0 -1px 3px rgba(0,0,0,.05); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .price-card { display: flex; gap: 20px; align-items: flex-start; padding: 20px; background: #f8fafc; border-radius: 8px; margin-bottom: 16px; }
+        .price-card img { width: 120px; height: 120px; object-fit: contain; border-radius: 8px; background: #fff; padding: 8px; border: 1px solid #e5e7eb; }
+        .price-card .info { flex: 1; }
+        .price-card .product-name { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .price-big { font-size: 32px; font-weight: 700; color: #16a34a; }
+        .original-price { font-size: 18px; color: #999; text-decoration: line-through; margin-left: 10px; }
+        .discount { display: inline-block; background: #dcfce7; color: #16a34a; padding: 3px 10px; border-radius: 4px; font-size: 14px; font-weight: 600; margin-left: 8px; }
+        .method { font-size: 12px; color: #6b7280; margin-top: 8px; }
+        .method strong { color: #2563eb; }
+        .debug { margin-top: 16px; }
+        .debug summary { cursor: pointer; font-size: 14px; font-weight: 600; color: #6b7280; padding: 8px 0; }
+        .debug pre { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin-top: 8px; max-height: 400px; overflow-y: auto; }
+        .success-badge { display: inline-block; background: #dcfce7; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .fail-badge { display: inline-block; background: #fef2f2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .no-price { background: #fffbeb; border: 1px solid #fed7aa; color: #92400e; padding: 16px; border-radius: 8px; }
+        .urls-info { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; margin-bottom: 12px; }
+        .urls-info dt { font-weight: 600; color: #6b7280; }
+        .urls-info dd { word-break: break-all; }
+        textarea { width: 100%; min-height: 200px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 13px; font-family: monospace; resize: vertical; outline: none; }
+        textarea:focus { border-color: #2563eb; }
+        #result { display: none; }
+        .howto { background: #eff6ff; border: 1px solid #bfdbfe; padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 13px; line-height: 1.6; }
+        .howto strong { color: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Triathlon Price Comparator — Test Scraper</h1>
+        <p class="subtitle">Comprueba que el scraper extrae precios, imágenes y nombres. Solo abre este archivo en tu navegador.</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('samples')">Ejemplos locales</button>
+            <button class="tab" onclick="showTab('paste')">Pegar HTML de tienda</button>
+        </div>
+
+        <!-- Tab 1: Samples -->
+        <div class="card tab-content active" id="tab-samples">
+            <h2>Archivos de ejemplo (simulan tiendas reales)</h2>
+            <div class="samples-grid" id="samplesGrid"></div>
+        </div>
+
+        <!-- Tab 2: Paste HTML -->
+        <div class="card tab-content" id="tab-paste">
+            <h2>Pegar HTML de una tienda real</h2>
+            <div class="howto">
+                <strong>Como usarlo:</strong><br>
+                1. Abre la web de la tienda (Nike, Alltricks, Adidas, etc.) en tu navegador<br>
+                2. Haz clic derecho en la pagina y selecciona <strong>"Ver codigo fuente de la pagina"</strong> (Ctrl+U)<br>
+                3. Selecciona todo (Ctrl+A), copia (Ctrl+C)<br>
+                4. Pega aqui abajo (Ctrl+V) y haz clic en <strong>"Analizar HTML"</strong>
+            </div>
+            <textarea id="pasteHtml" placeholder="Pega aqui el codigo fuente HTML de la pagina de producto..." style="margin-top:12px;"></textarea>
+            <button class="btn-green" onclick="analyzePasted()" style="margin-top:10px;">Analizar HTML</button>
+        </div>
+
+        <!-- Result -->
+        <div class="card" id="result"></div>
+    </div>
+
+    <script>
+    // ══════════════════════════════════════════════════════
+    // Sample HTML files (embedded)
+    // ══════════════════════════════════════════════════════
+    const SAMPLES = {
+        "Nike Pegasus 41": {
+            desc: "JSON-LD + meta tags",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="Nike Pegasus 41 Zapatillas de running para asfalto - Hombre">
+<meta property="og:image" content="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/pegasus-41.jpg">
+<meta property="product:price:amount" content="139.99">
+<meta property="product:price:currency" content="EUR">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Nike Pegasus 41","description":"Zapatillas de running para asfalto - Hombre","image":"https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/pegasus-41.jpg","brand":{"@type":"Brand","name":"Nike"},"offers":{"@type":"Offer","price":"139.99","priceCurrency":"EUR","availability":"https://schema.org/InStock"}}
+<\/script></head><body><h1>Nike Pegasus 41</h1></body></html>`
+        },
+        "HOKA Clifton 9 (Alltricks)": {
+            desc: "JSON-LD AggregateOffer con descuento",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="Zapatillas de Running HOKA Clifton 9 Azul">
+<meta property="og:image" content="https://media.alltricks.com/hd/hoka-clifton-9-blue.jpg">
+<meta property="product:price:amount" content="109.99">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Zapatillas de Running HOKA Clifton 9 Azul","image":["https://media.alltricks.com/hd/hoka-clifton-9-blue.jpg"],"brand":{"@type":"Brand","name":"HOKA"},"offers":{"@type":"AggregateOffer","lowPrice":"109.99","highPrice":"149.95","priceCurrency":"EUR","offerCount":"5"}}
+<\/script></head><body><h1>HOKA Clifton 9</h1></body></html>`
+        },
+        "Adidas Ultraboost 5": {
+            desc: "JSON-LD @graph con array de offers",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="Zapatilla Ultraboost 5">
+<meta property="og:image" content="https://assets.adidas.com/images/ultraboost-5.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"adidas"},{"@type":"Product","name":"Zapatilla Ultraboost 5","image":"https://assets.adidas.com/images/ultraboost-5.jpg","brand":{"@type":"Brand","name":"adidas"},"offers":[{"@type":"Offer","price":"199.95","priceCurrency":"EUR"},{"@type":"Offer","price":"179.95","priceCurrency":"EUR"}]}]}
+<\/script></head><body><h1>Ultraboost 5</h1></body></html>`
+        },
+        "Decathlon Kiprun": {
+            desc: "Meta tags + microdata itemprop",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="Zapatillas Running KIPRUN KS 900 Light Hombre">
+<meta property="og:image" content="https://contents.mediadecathlon.com/kiprun-ks900.jpg">
+<meta property="product:price:amount" content="89,99">
+<meta property="product:price:currency" content="EUR">
+</head><body>
+<div itemscope itemtype="https://schema.org/Product">
+<meta itemprop="name" content="Zapatillas Running KIPRUN KS 900 Light Hombre">
+<div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+<meta itemprop="price" content="89.99">
+<meta itemprop="priceCurrency" content="EUR">
+<span class="price">89,99 EUR</span>
+<span class="before-price">109,99 EUR</span>
+</div></div></body></html>`
+        },
+        "ASICS Nimbus 26 (SportsShoes)": {
+            desc: "Solo meta tags og:price",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="ASICS Gel Nimbus 26 Zapatillas de Running">
+<meta property="og:image" content="https://img.sportsshoes.com/asics-nimbus-26.jpg">
+<meta property="og:price:amount" content="153,00">
+<meta property="og:price:currency" content="EUR">
+</head><body><h1>ASICS Gel Nimbus 26</h1><div class="product-price">153,00 EUR</div></body></html>`
+        },
+        "Tradeinn RunnerInn": {
+            desc: "JSON-LD offers.offers nested",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="New Balance Fresh Foam X 1080v13">
+<meta property="og:image" content="https://www.tradeinn.com/f/nb-1080v13.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"New Balance Fresh Foam X 1080v13","image":"https://www.tradeinn.com/f/nb-1080v13.jpg","brand":{"@type":"Brand","name":"New Balance"},"offers":{"@type":"AggregateOffer","offers":[{"@type":"Offer","price":"119.99","priceCurrency":"EUR","availability":"InStock"},{"@type":"Offer","price":"134.99","priceCurrency":"EUR","availability":"InStock"}]}}
+<\/script></head><body><h1>NB 1080v13</h1></body></html>`
+        },
+        "Amazon (precio europeo)": {
+            desc: "JSON-LD con precio formato 1.234,56",
+            html: `<!DOCTYPE html><html><head>
+<meta property="og:title" content="Garmin Forerunner 265">
+<meta property="og:image" content="https://m.media-amazon.com/images/garmin-265.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"Garmin Forerunner 265","image":"https://m.media-amazon.com/images/garmin-265.jpg","brand":{"@type":"Brand","name":"Garmin"},"offers":{"@type":"Offer","price":"349.99","priceCurrency":"EUR","availability":"https://schema.org/InStock"}}
+<\/script></head><body><h1>Garmin Forerunner 265</h1></body></html>`
+        }
+    };
+
+    // ══════════════════════════════════════════════════════
+    // Scraper engine (JavaScript port of the PHP scraper)
+    // ══════════════════════════════════════════════════════
+
+    function parsePriceString(text) {
+        if (!text) return null;
+        text = text.replace(/[€$£¥\s\u00a0]/g, '').trim();
+        if (!text) return null;
+
+        // 1.234,56
+        if (/^[\d.]+,\d{1,2}$/.test(text)) {
+            text = text.replace(/\./g, '').replace(',', '.');
+        }
+        // 1,234.56
+        else if (/^[\d,]+\.\d{1,2}$/.test(text)) {
+            text = text.replace(/,/g, '');
+        }
+        // 153,00
+        else if (/^\d+,\d{1,2}$/.test(text)) {
+            text = text.replace(',', '.');
+        }
+
+        const val = parseFloat(text);
+        return (val > 0) ? val : null;
+    }
+
+    function formatPrice(price) {
+        if (price === null || price === undefined) return '—';
+        return price.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function extractFromJsonLD(html) {
+        const regex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+        let match;
+        const allJsonLD = [];
+
+        while ((match = regex.exec(html)) !== null) {
+            try {
+                const data = JSON.parse(match[1].trim());
+                allJsonLD.push(data);
+            } catch(e) { /* skip */ }
+        }
+
+        for (const data of allJsonLD) {
+            const items = data['@graph'] ? data['@graph'] : [data];
+            for (const item of items) {
+                const result = parseJsonLDItem(item);
+                if (result) return { ...result, allJsonLD };
+            }
+        }
+
+        return { price: null, original_price: null, allJsonLD };
+    }
+
+    function parseJsonLDItem(item) {
+        if (!item || typeof item !== 'object') return null;
+        const type = item['@type'] || '';
+
+        if (['Product', 'IndividualProduct', 'ProductModel'].includes(type)) {
+            return extractJsonLDOffers(item);
+        }
+        if (item.mainEntity) {
+            return parseJsonLDItem(item.mainEntity);
+        }
+        return null;
+    }
+
+    function extractJsonLDOffers(product) {
+        const offers = product.offers;
+        if (!offers) return null;
+
+        // Single offer
+        if (offers.price !== undefined) {
+            const price = parsePriceString(String(offers.price));
+            if (price) return { price, original_price: null };
+        }
+
+        // AggregateOffer
+        if (offers.lowPrice !== undefined) {
+            const price = parsePriceString(String(offers.lowPrice));
+            const high = offers.highPrice ? parsePriceString(String(offers.highPrice)) : null;
+            if (price) return { price, original_price: (high && high > price) ? high : null };
+        }
+
+        // Array of offers
+        if (Array.isArray(offers)) {
+            let best = null;
+            for (const o of offers) {
+                if (o.price === undefined) continue;
+                const p = parsePriceString(String(o.price));
+                if (p && (best === null || p < best.price)) {
+                    best = { price: p, original_price: null };
+                }
+            }
+            return best;
+        }
+
+        // Nested offers.offers
+        if (offers.offers && Array.isArray(offers.offers)) {
+            let best = null;
+            for (const o of offers.offers) {
+                if (o.price === undefined) continue;
+                const p = parsePriceString(String(o.price));
+                if (p && (best === null || p < best.price)) {
+                    best = { price: p, original_price: null };
+                }
+            }
+            return best;
+        }
+
+        return null;
+    }
+
+    function extractFromMetaTags(html) {
+        const names = ['product:price:amount', 'og:price:amount', 'twitter:data1'];
+        const metaTags = {};
+
+        // Collect all relevant meta tags
+        for (const name of ['product:price:amount', 'product:price:currency', 'og:price:amount', 'og:price:currency', 'og:image', 'og:title']) {
+            let m = html.match(new RegExp('<meta[^>]+(?:property|name)=["\']' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '["\'][^>]+content=["\']([^"\']+)', 'i'));
+            if (!m) {
+                m = html.match(new RegExp('<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
+            }
+            if (m) metaTags[name] = m[1];
+        }
+
+        for (const name of names) {
+            if (metaTags[name]) {
+                const price = parsePriceString(metaTags[name]);
+                if (price) return { price, original_price: null, metaTags };
+            }
+        }
+
+        return { price: null, metaTags };
+    }
+
+    function extractFromMicrodata(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const nodes = doc.querySelectorAll('[itemprop="price"]');
+        let price = null;
+
+        for (const node of nodes) {
+            let val = node.getAttribute('content') || node.textContent.trim();
+            const parsed = parsePriceString(val);
+            if (parsed && parsed > 0) {
+                price = parsed;
+                break;
+            }
+        }
+
+        if (!price) return { price: null, original_price: null };
+
+        // Try to find original price
+        let original_price = null;
+        const origNodes = doc.querySelectorAll('.old, .original, .was, .regular, .before, .before-price, .old-price, .original-price');
+        for (const node of origNodes) {
+            const parsed = parsePriceString(node.textContent.trim());
+            if (parsed && parsed > price) {
+                original_price = parsed;
+                break;
+            }
+        }
+
+        return { price, original_price };
+    }
+
+    function extractProductImage(html) {
+        // JSON-LD image
+        const regex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+        let match;
+        while ((match = regex.exec(html)) !== null) {
+            try {
+                const data = JSON.parse(match[1].trim());
+                const items = data['@graph'] ? data['@graph'] : [data];
+                for (const item of items) {
+                    if (['Product', 'IndividualProduct', 'ProductModel'].includes(item['@type'])) {
+                        let img = item.image;
+                        if (Array.isArray(img)) img = img[0];
+                        if (img && typeof img === 'object') img = img.url;
+                        if (img && img.startsWith('http')) return img;
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // og:image
+        let m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)/i);
+        if (!m) m = html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image/i);
+        if (m && m[1].startsWith('http')) return m[1];
+
+        return null;
+    }
+
+    function extractProductName(html) {
+        const regex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+        let match;
+        while ((match = regex.exec(html)) !== null) {
+            try {
+                const data = JSON.parse(match[1].trim());
+                const items = data['@graph'] ? data['@graph'] : [data];
+                for (const item of items) {
+                    if (['Product', 'IndividualProduct', 'ProductModel'].includes(item['@type'])) {
+                        if (item.name) return item.name;
+                    }
+                }
+            } catch(e) {}
+        }
+
+        let m = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)/i);
+        if (!m) m = html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title/i);
+        if (m) return m[1];
+
+        return null;
+    }
+
+    function resolveAffiliateUrl(url) {
+        try {
+            const u = new URL(url);
+            const host = u.hostname.toLowerCase();
+            const params = u.searchParams;
+
+            if (host.includes('awin1.com') && params.get('ued'))
+                return decodeURIComponent(params.get('ued'));
+            if (host.includes('tradedoubler.com') && params.get('url'))
+                return decodeURIComponent(params.get('url'));
+            if (host.includes('tradetracker.') && (params.get('r') || params.get('url')))
+                return decodeURIComponent(params.get('r') || params.get('url'));
+            if ((host.includes('anrdoezrs.net') || host.includes('dpbolvw.net') || host.includes('jdoqocy.com')) && params.get('url'))
+                return decodeURIComponent(params.get('url'));
+            if (host.includes('shareasale.com') && params.get('urllink'))
+                return decodeURIComponent(params.get('urllink'));
+            if (host.includes('webgains.') && params.get('wgtarget'))
+                return decodeURIComponent(params.get('wgtarget'));
+            if (host.includes('click.linksynergy.com') && params.get('murl'))
+                return decodeURIComponent(params.get('murl'));
+
+            for (const p of ['url', 'redirect', 'dest', 'destination', 'target', 'goto', 'link']) {
+                const val = params.get(p);
+                if (val) {
+                    try { new URL(decodeURIComponent(val)); return decodeURIComponent(val); } catch(e) {}
+                }
+            }
+        } catch(e) {}
+        return url;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // Main scrape function
+    // ══════════════════════════════════════════════════════
+
+    function scrapeHtml(html, source) {
+        const result = {
+            source: source,
+            html_length: html.length,
+            price: null,
+            original_price: null,
+            discount: null,
+            method: null,
+            image: null,
+            product_name: null,
+            jsonld_raw: [],
+            meta_tags: {}
+        };
+
+        // 1. JSON-LD
+        const jsonld = extractFromJsonLD(html);
+        result.jsonld_raw = jsonld.allJsonLD || [];
+        if (jsonld.price) {
+            result.price = jsonld.price;
+            result.original_price = jsonld.original_price;
+            result.method = 'json-ld';
+        }
+
+        // 2. Meta tags
+        const meta = extractFromMetaTags(html);
+        result.meta_tags = meta.metaTags || {};
+        if (!result.price && meta.price) {
+            result.price = meta.price;
+            result.method = 'meta-tags';
+        }
+
+        // 3. Microdata
+        if (!result.price) {
+            const micro = extractFromMicrodata(html);
+            if (micro.price) {
+                result.price = micro.price;
+                result.original_price = micro.original_price;
+                result.method = 'microdata';
+            }
+        }
+
+        // Discount
+        if (result.price && result.original_price && result.original_price > result.price) {
+            const pct = Math.round(((result.original_price - result.price) / result.original_price) * 100);
+            result.discount = '-' + pct + '%';
+        }
+
+        // Image & name
+        result.image = extractProductImage(html);
+        result.product_name = extractProductName(html);
+
+        return result;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // UI
+    // ══════════════════════════════════════════════════════
+
+    function showTab(name) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function showResult(result) {
+        const el = document.getElementById('result');
+        el.style.display = 'block';
+
+        const hasPrize = result.price !== null;
+        let html = `<h2>Resultado ${hasPrize
+            ? '<span class="success-badge">PRECIO ENCONTRADO</span>'
+            : '<span class="fail-badge">SIN PRECIO</span>'}</h2>`;
+
+        html += `<dl class="urls-info">
+            <dt>Fuente:</dt><dd>${esc(result.source)}</dd>
+            <dt>HTML analizado:</dt><dd>${result.html_length.toLocaleString()} bytes</dd>
+        </dl>`;
+
+        if (hasPrize) {
+            html += `<div class="price-card">`;
+            if (result.image) {
+                html += `<img src="${esc(result.image)}" alt="Producto" onerror="this.style.display='none'">`;
+            }
+            html += `<div class="info">`;
+            if (result.product_name) {
+                html += `<div class="product-name">${esc(result.product_name)}</div>`;
+            }
+            html += `<div><span class="price-big">${formatPrice(result.price)} &euro;</span>`;
+            if (result.original_price) {
+                html += ` <span class="original-price">${formatPrice(result.original_price)} &euro;</span>`;
+            }
+            if (result.discount) {
+                html += ` <span class="discount">${esc(result.discount)}</span>`;
+            }
+            html += `</div>`;
+            html += `<div class="method">Metodo de extraccion: <strong>${esc(result.method)}</strong></div>`;
+            html += `</div></div>`;
+        } else {
+            html += `<div class="no-price"><strong>No se encontro precio.</strong> El HTML se analizo (${result.html_length.toLocaleString()} bytes) pero no se detecto precio en JSON-LD, meta tags ni microdata. Revisa los datos raw.</div>`;
+        }
+
+        // Debug
+        html += `<details class="debug" open>
+            <summary>Datos raw de depuracion</summary>
+            <h3 style="font-size:14px;margin:12px 0 4px;">JSON-LD encontrados (${result.jsonld_raw.length}):</h3>
+            <pre>${esc(JSON.stringify(result.jsonld_raw, null, 2))}</pre>
+            <h3 style="font-size:14px;margin:12px 0 4px;">Meta tags de precio:</h3>
+            <pre>${esc(JSON.stringify(result.meta_tags, null, 2))}</pre>
+            <h3 style="font-size:14px;margin:12px 0 4px;">Resultado completo:</h3>
+            <pre>${esc(JSON.stringify({...result, jsonld_raw: '(ver arriba)', meta_tags: '(ver arriba)'}, null, 2))}</pre>
+        </details>`;
+
+        el.innerHTML = html;
+        el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function esc(s) {
+        if (s === null || s === undefined) return '';
+        const div = document.createElement('div');
+        div.textContent = String(s);
+        return div.innerHTML;
+    }
+
+    function testSample(name) {
+        const sample = SAMPLES[name];
+        if (!sample) return;
+        const result = scrapeHtml(sample.html, 'Ejemplo: ' + name);
+        showResult(result);
+    }
+
+    function analyzePasted() {
+        const html = document.getElementById('pasteHtml').value;
+        if (!html.trim()) {
+            alert('Pega el codigo fuente HTML primero.');
+            return;
+        }
+        const result = scrapeHtml(html, 'HTML pegado (' + html.length.toLocaleString() + ' bytes)');
+        showResult(result);
+    }
+
+    // Build samples grid
+    const grid = document.getElementById('samplesGrid');
+    for (const [name, sample] of Object.entries(SAMPLES)) {
+        const card = document.createElement('div');
+        card.className = 'sample-card';
+        card.innerHTML = `<div class="name">${esc(name)}</div><div class="file">${esc(sample.desc)}</div>`;
+        card.onclick = () => testSample(name);
+        grid.appendChild(card);
+    }
+    </script>
+</body>
+</html>
