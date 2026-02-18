@@ -271,6 +271,18 @@ class Scraper {
             return self::extract_jsonld_offers( $item );
         }
 
+        // ProductGroup (Nike, etc.) — variants inside hasVariant.
+        if ( 'ProductGroup' === $type && ! empty( $item['hasVariant'] ) && is_array( $item['hasVariant'] ) ) {
+            $best = null;
+            foreach ( $item['hasVariant'] as $variant ) {
+                $r = self::parse_jsonld_item( $variant );
+                if ( $r && $r['price'] && ( null === $best || $r['price'] < $best['price'] ) ) {
+                    $best = $r;
+                }
+            }
+            if ( $best ) return $best;
+        }
+
         if ( isset( $item['mainEntity'] ) ) {
             $result = self::parse_jsonld_item( $item['mainEntity'] );
             if ( $result ) return $result;

@@ -227,6 +227,19 @@
         if (['Product', 'IndividualProduct', 'ProductModel'].includes(type)) {
             return extractJsonLDOffers(item);
         }
+
+        // ProductGroup (Nike, etc.) — variants inside hasVariant
+        if (type === 'ProductGroup' && Array.isArray(item.hasVariant)) {
+            let best = null;
+            for (const variant of item.hasVariant) {
+                const r = parseJsonLDItem(variant);
+                if (r && r.price && (best === null || r.price < best.price)) {
+                    best = r;
+                }
+            }
+            if (best) return best;
+        }
+
         if (item.mainEntity) {
             return parseJsonLDItem(item.mainEntity);
         }
