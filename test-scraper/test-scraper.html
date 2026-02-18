@@ -210,10 +210,14 @@
         }
 
         for (const data of allJsonLD) {
-            const items = data['@graph'] ? data['@graph'] : [data];
-            for (const item of items) {
-                const result = parseJsonLDItem(item);
-                if (result) return { ...result, allJsonLD };
+            // Nike wraps JSON-LD in an array: [{...}] instead of {...}
+            const entries = Array.isArray(data) ? data : [data];
+            for (const entry of entries) {
+                const items = entry['@graph'] ? entry['@graph'] : [entry];
+                for (const item of items) {
+                    const result = parseJsonLDItem(item);
+                    if (result) return { ...result, allJsonLD };
+                }
             }
         }
 

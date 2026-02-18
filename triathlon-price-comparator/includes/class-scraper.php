@@ -223,18 +223,23 @@ class TPC_Scraper {
                 continue;
             }
 
-            // Handle @graph arrays.
-            $items = array();
-            if ( isset( $data['@graph'] ) && is_array( $data['@graph'] ) ) {
-                $items = $data['@graph'];
-            } else {
-                $items = array( $data );
-            }
+            // Nike wraps JSON-LD in an array: [{...}] instead of {...}.
+            $entries = isset( $data[0] ) && is_array( $data[0] ) ? $data : array( $data );
 
-            foreach ( $items as $item ) {
-                $result = self::parse_jsonld_item( $item );
-                if ( $result ) {
-                    return $result;
+            foreach ( $entries as $entry ) {
+                // Handle @graph arrays.
+                $items = array();
+                if ( isset( $entry['@graph'] ) && is_array( $entry['@graph'] ) ) {
+                    $items = $entry['@graph'];
+                } else {
+                    $items = array( $entry );
+                }
+
+                foreach ( $items as $item ) {
+                    $result = self::parse_jsonld_item( $item );
+                    if ( $result ) {
+                        return $result;
+                    }
                 }
             }
         }
