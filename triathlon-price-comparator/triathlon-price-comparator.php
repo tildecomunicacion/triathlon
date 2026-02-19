@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Triathlon Price Comparator
  * Description: Comparador de precios con scraping automático de URLs de afiliados.
- * Version: 2.0.0
+ * Version: 2.2.0
  * Author: Tilde Comunicación
  * Text Domain: triathlon-price-comparator
  */
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'TPC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TPC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'TPC_VERSION', '2.1.0' );
+define( 'TPC_VERSION', '2.2.0' );
 
 require_once TPC_PLUGIN_DIR . 'includes/class-stores.php';
 require_once TPC_PLUGIN_DIR . 'includes/class-scraper.php';
