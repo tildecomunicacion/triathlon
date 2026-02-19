@@ -117,7 +117,7 @@ class TPC_Scraper {
     public static function refresh_price( $url, $store_slug ) {
         $store = TPC_Stores::get_store( $store_slug );
         if ( ! $store ) {
-            return null;
+            return array( 'error' => 'Tienda no encontrada: ' . $store_slug );
         }
 
         // Resolve affiliate URL to the real product page.
@@ -125,7 +125,7 @@ class TPC_Scraper {
 
         $html = self::fetch_html( $product_url );
         if ( ! $html ) {
-            return null;
+            return array( 'error' => 'No se pudo descargar: ' . $product_url );
         }
 
         // Try all extraction methods in order of reliability.
@@ -171,7 +171,7 @@ class TPC_Scraper {
         }
 
         if ( null === $price ) {
-            return null;
+            return array( 'error' => 'HTML descargado (' . strlen( $html ) . ' bytes) de ' . $product_url . ' pero no se encontró precio en JSON-LD, meta tags ni microdata.' );
         }
 
         // Calculate discount.

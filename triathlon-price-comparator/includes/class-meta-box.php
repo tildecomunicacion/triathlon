@@ -284,14 +284,23 @@ class TPC_Meta_Box {
         TPC_Scraper::delete_cache( $url );
         $result = TPC_Scraper::refresh_price( $url, $store_slug );
 
-        if ( ! $result ) {
-            wp_send_json_error( 'No se pudo extraer el precio. Verifica la URL y el selector CSS de la tienda.' );
+        if ( ! $result || isset( $result['error'] ) ) {
+            $error = isset( $result['error'] ) ? $result['error'] : 'Error desconocido.';
+            wp_send_json_error( $error );
+        }
+
+        if ( empty( $result['price'] ) ) {
+            wp_send_json_error( 'No se encontró precio en la página.' );
         }
 
         wp_send_json_success( array(
             'price'          => TPC_Scraper::format_price( $result['price'] ),
-            'original_price' => $result['original_price'] ? TPC_Scraper::format_price( $result['original_price'] ) : null,
-            'discount'       => $result['discount'],
+            'original_price' => ! empty( $result['original_price'] ) ? TPC_Scraper::format_price( $result['original_price'] ) : null,
+            'discount'       => $result['discount'] ?? null,
+            'product_name'   => $result['product_name'] ?? null,
+            'image'          => $result['image'] ?? null,
+            'method'         => $result['method'] ?? null,
+            'product_url'    => $result['product_url'] ?? null,
         ) );
     }
 
