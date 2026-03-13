@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Tasa de Sudoración · Planeta Triatlón</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,700;1,800;1,900&family=Barlow:wght@400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #f0f0f0;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: #2a2a2a;
+      color: #fff;
+      text-align: center;
+      padding: 48px 24px 40px;
+    }
+    .hero__label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 18px;
+    }
+    .hero__title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: clamp(42px, 8vw, 72px);
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero__title span {
+      color: #e8003a;
+      display: block;
+    }
+    .hero__desc {
+      font-size: 16px;
+      color: #ccc;
+      max-width: 520px;
+      margin: 0 auto 28px;
+      line-height: 1.5;
+    }
+    .hero__stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .hero__stats strong { color: #e8003a; font-weight: 700; }
+    .hero__stats span { color: #fff; font-weight: 600; }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+    }
+
+    /* ── INTRO BOX ── */
+    .intro-box {
+      background: #fff;
+      border-left: 4px solid #e8003a;
+      border-radius: 4px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #333;
+    }
+    .intro-box p + p { margin-top: 14px; }
+    .intro-box a { color: #e8003a; text-decoration: none; }
+    .note-box {
+      background: #fff8f0;
+      border: 1px solid #f0d0b0;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: #555;
+    }
+    .note-box strong { color: #e8003a; }
+
+    /* ── FORM CARD ── */
+    .card {
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .card__header {
+      background: #2a2a2a;
+      padding: 14px 20px;
+    }
+    .card__tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+    .card__header-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 22px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .card__header-title span { color: #e8003a; }
+    .card__header-sub {
+      font-size: 13px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .card__body {
+      padding: 24px 20px;
+    }
+
+    /* ── FIELDS ── */
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 520px) { .fields-grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field__label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #444;
+    }
+    .field__hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: -3px;
+    }
+    .field__input {
+      border: 1.5px solid #ddd;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 16px;
+      color: #1a1a1a;
+      outline: none;
+      transition: border-color .2s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    .field__input::-webkit-outer-spin-button,
+    .field__input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .field__input:focus { border-color: #e8003a; }
+    .field__input.error { border-color: #e8003a; background: #fff5f7; }
+
+    .field--full { grid-column: 1 / -1; }
+
+    /* ── BUTTON ── */
+    .btn-calc {
+      margin-top: 24px;
+      width: 100%;
+      background: #e8003a;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 16px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-style: italic;
+      font-size: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .btn-calc:hover { background: #c5002f; }
+    .btn-calc:active { transform: scale(.98); }
+
+    /* ── ERROR MESSAGE ── */
+    .error-msg {
+      display: none;
+      background: #fff0f3;
+      border: 1px solid #ffc0cb;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: #c0002a;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ── RESULTS ── */
+    .results {
+      display: none;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .results.visible { display: block; }
+
+    .results__header {
+      background: #2a2a2a;
+      padding: 14px 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+    }
+    .results__header-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 4px;
+    }
+    .results__header-title {
+      font-weight: 900;
+      font-style: italic;
+      font-size: 22px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .results__header-title span { color: #e8003a; }
+
+    .results__body { padding: 24px 20px; }
+
+    /* badge de nivel */
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-style: italic;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .level-badge--low    { background: #e8f5e9; color: #2e7d32; }
+    .level-badge--medium { background: #fff8e1; color: #f57f17; }
+    .level-badge--high   { background: #fce4ec; color: #c62828; }
+    .level-badge__dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .level-badge--low    .level-badge__dot { background: #2e7d32; }
+    .level-badge--medium .level-badge__dot { background: #f57f17; }
+    .level-badge--high   .level-badge__dot { background: #c62828; }
+
+    /* stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 520px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat {
+      border: 1.5px solid #eee;
+      border-radius: 4px;
+      padding: 16px 18px;
+    }
+    .stat__label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .stat__value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 36px;
+      color: #1a1a1a;
+      line-height: 1;
+    }
+    .stat__value span {
+      font-size: 16px;
+      font-weight: 600;
+      color: #666;
+      margin-left: 4px;
+    }
+    .stat--highlight .stat__value { color: #e8003a; }
+
+    /* interpretation */
+    .interpretation {
+      background: #f7f7f7;
+      border-radius: 4px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #444;
+    }
+    .interpretation strong { color: #1a1a1a; }
+
+    /* disclaimer */
+    .disclaimer {
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.5;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 16px;
+    }
+
+    /* reset link */
+    .btn-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      background: none;
+      border: 1.5px solid #ddd;
+      border-radius: 4px;
+      padding: 10px 18px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #555;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-reset:hover { border-color: #e8003a; color: #e8003a; }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <p class="hero__label">Planeta Triatlón</p>
+    <h1 class="hero__title">
+      Calculadora de<br>
+      <span>tasa de</span>
+      <span>sudoración</span>
+    </h1>
+    <p class="hero__desc">Descubre exactamente cuánto tienes que beber por hora según tu cuerpo y las condiciones de tu entrenamiento</p>
+    <div class="hero__stats">
+      <div><strong>4</strong> <span>datos</span></div>
+      <div><strong>30</strong> <span>segundos</span></div>
+      <div><strong>Resultado</strong> <span>inmediato</span></div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- INTRO -->
+    <div class="intro-box">
+      <p>La <strong>tasa de sudoración</strong> es individual: dos atletas con el mismo peso y entrenando bajo el mismo sol pueden sudar el doble el uno que el otro. Por eso las guías genéricas de hidratación fallan.</p>
+      <p>Esta calculadora usa tu propio cuerpo como referencia para darte un número exacto en mililitros por hora.</p>
+      <div class="note-box">
+        <strong>Importante:</strong> Pésate sin ropa, antes y después del entrenamiento, sin haber ido al baño entre medias. Cuanto más preciso el pesaje, más fiable el resultado.
+      </div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card" id="form-card">
+      <div class="card__header">
+        <p class="card__tag">Tus datos</p>
+        <p class="card__header-title">Introduce <span>tu sesión</span></p>
+        <p class="card__header-sub">Valores del entrenamiento que acabas de realizar</p>
+      </div>
+      <div class="card__body">
+        <div class="fields-grid">
+
+          <div class="field">
+            <label class="field__label" for="peso-antes">Peso antes</label>
+            <p class="field__hint">Sin ropa, en kg</p>
+            <input class="field__input" type="number" id="peso-antes" placeholder="70.0" step="0.1" min="30" max="200">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="peso-despues">Peso después</label>
+            <p class="field__hint">Sin ropa, en kg</p>
+            <input class="field__input" type="number" id="peso-despues" placeholder="69.2" step="0.1" min="30" max="200">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="liquido">Líquido ingerido</label>
+            <p class="field__hint">Total durante el entrenamiento, en mL</p>
+            <input class="field__input" type="number" id="liquido" placeholder="500" step="10" min="0" max="5000">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="duracion">Duración</label>
+            <p class="field__hint">En minutos</p>
+            <input class="field__input" type="number" id="duracion" placeholder="60" step="1" min="5" max="600">
+          </div>
+
+        </div>
+
+        <div class="error-msg" id="error-msg"></div>
+        <button class="btn-calc" id="btn-calc">Calcular mi tasa →</button>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+      <div class="results__header">
+        <p class="results__header-tag">Tu resultado</p>
+        <p class="results__header-title">Tu <span>hidratación</span> personalizada</p>
+      </div>
+      <div class="results__body">
+
+        <div class="level-badge" id="level-badge">
+          <div class="level-badge__dot"></div>
+          <span id="level-text"></span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat stat--highlight">
+            <p class="stat__label">Tasa de sudoración</p>
+            <p class="stat__value"><span id="res-tasa">—</span><span>mL/h</span></p>
+          </div>
+          <div class="stat">
+            <p class="stat__label">Recomendación de ingesta</p>
+            <p class="stat__value"><span id="res-ingesta">—</span><span>mL/h</span></p>
+          </div>
+          <div class="stat">
+            <p class="stat__label">Pérdida neta de líquido</p>
+            <p class="stat__value"><span id="res-perdida">—</span><span>mL</span></p>
+          </div>
+          <div class="stat">
+            <p class="stat__label">Cada 20 minutos bebe</p>
+            <p class="stat__value"><span id="res-cada20">—</span><span>mL</span></p>
+          </div>
+        </div>
+
+        <div class="interpretation" id="interpretation"></div>
+
+        <p class="disclaimer">
+          Esta calculadora es una herramienta orientativa basada en la fórmula de sudoración estándar (ACSM). Los resultados son válidos para condiciones similares a las del entrenamiento medido. Repite el test en diferentes épocas del año o con cambios de intensidad. No sustituye el consejo de un nutricionista deportivo.
+        </p>
+
+        <button class="btn-reset" id="btn-reset">↩ Calcular de nuevo</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var btnCalc  = document.getElementById('btn-calc');
+      var btnReset = document.getElementById('btn-reset');
+      var errorMsg = document.getElementById('error-msg');
+      var results  = document.getElementById('results');
+      var formCard = document.getElementById('form-card');
+
+      function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.classList.add('visible');
+      }
+
+      function clearErrors() {
+        errorMsg.classList.remove('visible');
+        document.querySelectorAll('.field__input').forEach(function (el) {
+          el.classList.remove('error');
+        });
+      }
+
+      function markError(id) {
+        document.getElementById(id).classList.add('error');
+      }
+
+      btnCalc.addEventListener('click', function () {
+        clearErrors();
+
+        var pesoAntes   = parseFloat(document.getElementById('peso-antes').value);
+        var pesoDespues = parseFloat(document.getElementById('peso-despues').value);
+        var liquido     = parseFloat(document.getElementById('liquido').value);
+        var duracion    = parseFloat(document.getElementById('duracion').value);
+
+        // Validación
+        if (isNaN(pesoAntes) || pesoAntes <= 0) {
+          markError('peso-antes'); showError('Introduce tu peso antes del entrenamiento.'); return;
+        }
+        if (isNaN(pesoDespues) || pesoDespues <= 0) {
+          markError('peso-despues'); showError('Introduce tu peso después del entrenamiento.'); return;
+        }
+        if (pesoDespues >= pesoAntes) {
+          markError('peso-despues');
+          showError('El peso después debe ser menor que el peso antes. Recuerda pesarte sin haber bebido entre medias.');
+          return;
+        }
+        if (isNaN(liquido) || liquido < 0) {
+          markError('liquido'); showError('Introduce el líquido ingerido (puede ser 0 si no bebiste nada).'); return;
+        }
+        if (isNaN(duracion) || duracion < 5) {
+          markError('duracion'); showError('Introduce la duración en minutos (mínimo 5 min).'); return;
+        }
+
+        // Cálculo
+        var perdidaPeso  = (pesoAntes - pesoDespues) * 1000;   // mL
+        var perdidaNeta  = perdidaPeso + liquido;               // mL total sudado
+        var horas        = duracion / 60;
+        var tasa         = Math.round(perdidaNeta / horas);     // mL/h
+        var ingesta      = Math.round(tasa * 0.8);              // 80% reposición
+        var cada20       = Math.round(ingesta / 3);             // cada 20 min
+
+        // Nivel
+        var nivel, levelClass, levelText, interpretacion;
+        if (tasa < 500) {
+          nivel = 'low'; levelText = 'Sudoración baja';
+          interpretacion = '<strong>Sudoración baja (< 500 mL/h).</strong> Tu cuerpo gestiona bien la temperatura en estas condiciones. Con una ingesta de <strong>' + ingesta + ' mL/h</strong> repones el 80% de lo perdido, lo que es suficiente para la mayoría de sesiones. Si el calor sube o la intensidad aumenta, repite el test porque tu tasa cambiará.';
+        } else if (tasa <= 1200) {
+          nivel = 'medium'; levelText = 'Sudoración moderada';
+          interpretacion = '<strong>Sudoración moderada (500–1200 mL/h).</strong> Estás dentro del rango habitual para deportistas de resistencia. Beber <strong>' + ingesta + ' mL/h</strong> —unos ' + cada20 + ' mL cada 20 minutos— cubre el 80% de tu pérdida, que es la reposición recomendada para no sobrehidratar ni deshidratar.';
+        } else {
+          nivel = 'high'; levelText = 'Sudoración alta';
+          interpretacion = '<strong>Sudoración alta (> 1200 mL/h).</strong> Pierdes líquido muy rápido. Aunque la recomendación general es reponer el 80% (' + ingesta + ' mL/h), en tu caso considera también la ingesta de sodio para retener el líquido. Habla con un nutricionista deportivo si entrenamientos así son habituales.';
+        }
+
+        // Rellenar resultados
+        document.getElementById('res-tasa').textContent    = tasa.toLocaleString('es-ES');
+        document.getElementById('res-ingesta').textContent = ingesta.toLocaleString('es-ES');
+        document.getElementById('res-perdida').textContent = Math.round(perdidaNeta).toLocaleString('es-ES');
+        document.getElementById('res-cada20').textContent  = cada20.toLocaleString('es-ES');
+        document.getElementById('interpretation').innerHTML = interpretacion;
+
+        var badge = document.getElementById('level-badge');
+        badge.className = 'level-badge level-badge--' + nivel;
+        document.getElementById('level-text').textContent = levelText;
+
+        // Mostrar resultados
+        results.classList.add('visible');
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      btnReset.addEventListener('click', function () {
+        results.classList.remove('visible');
+        document.querySelectorAll('.field__input').forEach(function (el) { el.value = ''; });
+        clearErrors();
+        formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    })();
+  </script>
+
+</body>
+</html>
