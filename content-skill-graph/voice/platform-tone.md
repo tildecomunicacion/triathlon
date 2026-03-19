@@ -36,7 +36,7 @@ Cómo adaptar [[brand-voice]] a cada plataforma sin perder la identidad ni el ri
 - **Persona:** Primera persona hablada — como si estuvieras en una conversación real
 - **Ritmo:** Frases muy cortas, pausas naturales, ninguna frase que suene a guión
 - **Emoción:** Alta energía calmada — involucra sin agitar
-- **Ejemplo de tono:** "Mira, esto lo veo todo el tiempo en consulta. Llega una pareja, dice que 'no se comunican'. Pero cuando empezamos a hablar... el problema es otro. Siempre es otro."
+- **Ejemplo de tono:** "Mira, esto lo veo constantemente en consulta. Llega una pareja, dice que 'no se comunican'. Pero cuando empezamos a hablar... el problema es otro. Siempre es otro."
 
 ---
 
@@ -45,4 +45,4 @@ Cómo adaptar [[brand-voice]] a cada plataforma sin perder la identidad ni el ri
 - **Persona:** Primera persona que enseña — como un profesor que también es humano
 - **Ritmo:** Más largo y articulado — aquí sí se pueden construir argumentos completos
 - **Emoción:** Presente en los ejemplos y casos, no en el lenguaje metacomentado
-- **Ejemplo de tono:** "Hoy quiero hablar de algo que casi ningún video de relaciones nombra correctamente: la diferencia entre una pelea de contenido y una pelea de apego. Porque si no sabés distinguirlas, estás resolviendo el problema equivocado."
+- **Ejemplo de tono:** "Hoy quiero hablar de algo que casi ningún vídeo de relaciones nombra correctamente: la diferencia entre una pelea de contenido y una pelea de apego. Porque si no sabes distinguirlas, estás resolviendo el problema equivocado."

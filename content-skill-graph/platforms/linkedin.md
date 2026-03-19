@@ -18,7 +18,7 @@ Para adaptar el tono, ver [[platform-tone]] → sección LinkedIn.
 Para el ciclo completo, ver [[repurpose]].
 
 ## Ángulos que funcionan en LinkedIn para terapia de parejas
-- Caso clínico anonimizado + aprendizaje: "Atendí a una pareja que llevaba 12 años peleando por los mismos 3 minutos. Esto es lo que encontramos"
+- Caso clínico anonimizado + aprendizaje: "Traté a una pareja que llevaba 12 años discutiendo por los mismos 3 minutos. Esto es lo que encontramos"
 - Reflexión sobre el campo: "Por qué la terapia de parejas tiene tan mala reputación — y cómo está cambiando"
 - Marco teórico explicado para no especialistas: "El modelo Gottman en 800 palabras: lo que predice el divorcio con 94% de precisión"
 - Puente entre trabajo y relaciones: "Lo que las empresas pueden aprender de cómo las parejas resuelven conflictos"

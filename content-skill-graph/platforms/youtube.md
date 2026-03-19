@@ -20,7 +20,7 @@ Ver [[repurpose]] — YouTube es el hub desde donde se derivan los demás format
 ```
 [0:00–0:30]   Hook: plantear el problema o pregunta central SIN presentarse aún
 [0:30–1:30]   Presentación breve + promesa del video ("en este video vas a aprender X")
-[1:30–3:00]   Contexto: por qué este tema importa, qué pasa si no lo resuelves
+[1:30–3:00]   Contexto: por qué este tema importa, qué ocurre si no lo resuelves
 [3:00–7:00]   Desarrollo: 3–4 puntos principales con ejemplos, casos, frameworks
 [7:00–9:00]   Síntesis: cómo aplicarlo, qué hacer esta semana
 [9:00–10:00]  CTA: suscríbete, comenta, link a recurso o consulta

@@ -17,13 +17,13 @@ Ver [[repurpose]] para el flujo completo.
 
 ## Estructura de carrusel ideal (7 slides)
 ```
-Slide 1: Claim provocador o pregunta que duele ("¿Pelean siempre por lo mismo?")
+Slide 1: Claim provocador o pregunta que duele ("¿Siempre discutís por lo mismo?")
 Slide 2: El patrón que nadie nombra — el problema real detrás del problema
 Slide 3: Señal 1 / Concepto clave 1
 Slide 4: Señal 2 / Concepto clave 2
 Slide 5: Señal 3 / Concepto clave 3
 Slide 6: Qué hacer — acción concreta o reencuadre
-Slide 7: Cierre + CTA ("Guarda esto" / "Mándaselo a tu pareja")
+Slide 7: Cierre + CTA ("Guarda esto" / "Compártelo con tu pareja")
 ```
 
 ## Estructura de reel ideal (45–60 seg)
@@ -32,7 +32,7 @@ Slide 7: Cierre + CTA ("Guarda esto" / "Mándaselo a tu pareja")
 [3–10s]  Planteamiento: el patrón o problema a nombrar
 [10–40s] Desarrollo en 3–4 puntos cortos con cortes ágiles
 [40–55s] Cierre: el aprendizaje en una frase
-[55–60s] CTA: "Sígueme", "Comenta si te pasó", "Parte 2 si quieren"
+[55–60s] CTA: "Sígueme", "Comenta si te ha pasado", "Parte 2 si queréis"
 ```
 
 ## Ángulos que funcionan en IG para terapia de parejas

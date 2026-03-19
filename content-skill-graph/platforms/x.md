@@ -16,11 +16,11 @@ Escribe este formato PRIMERO, luego expande hacia [[linkedin]] y [[youtube]].
 Para repurposing completo, ver [[repurpose]].
 
 ## Ángulos que funcionan en X para terapia de parejas
-- Contrarian: "El problema en tu relación no es la comunicación. Es lo que no se animan a decir"
+- Contrarian: "El problema en tu relación no es la comunicación. Es lo que no se atreven a decir"
 - Verdad incómoda: "La mayoría de peleas de pareja no son sobre lo que parecen ser"
 - Patrón nombrado: "Si uno persigue y el otro huye, no es incompatibilidad — es dinámica de apego"
 - Dato o concepto desmitificado: "Las parejas felices también pelean. La diferencia es cómo reparan"
-- Proceso crudo: "Lo que pasa en mi consultorio cuando una pareja llega al límite"
+- Proceso crudo: "Lo que pasa en mi consulta cuando una pareja llega al límite"
 
 ## Estructura de hilo ideal
 ```

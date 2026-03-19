@@ -22,7 +22,7 @@ Ver [[repurpose]] para el flujo completo.
 [2–8s]   Planteamiento: "Hoy hablo de X porque es lo que más veo en consulta"
 [8–45s]  Desarrollo en 3–4 puntos cortos con cortes entre cada uno
 [45–55s] Cierre: el aprendizaje clave en una frase memorable
-[55–60s] CTA: "Sígueme", "Comenta si te identificaste", "Parte 2 si quieren"
+[55–60s] CTA: "Sígueme", "Comenta si te has sentido así", "Parte 2 si queréis"
 ```
 
 ## Indicaciones de cámara en el guion
@@ -33,15 +33,15 @@ Incluir siempre:
 - `[VOZ EN OFF]` si es sobre imágenes o texto animado
 
 ## Ángulos que funcionan en TikTok para terapia de parejas
-- "Si en tu pareja uno siempre busca y el otro siempre se aleja, esto te va a explicar todo" [frontal]
+- "Si en tu pareja uno siempre busca y el otro siempre se aleja, esto te lo explica todo" [frontal]
 - "Lo que pasa en el cerebro durante una pelea de pareja" [texto animado + voz en off]
 - "3 frases que destruyen la comunicación en una pareja (y cómo reemplazarlas)" [frontal, lista rápida]
 - "¿Tu pareja 'no escucha'? Puede que no sea lo que crees" [frontal, directo]
-- "Señales de que una pareja puede salvarse — desde el consultorio" [frontal, reflexivo]
+- "Señales de que una pareja puede salvarse — desde la consulta" [frontal, reflexivo]
 
 ## Tono de voz
 Ver [[platform-tone]] → sección TikTok
-El más crudo y cercano de todos. Primera persona. Hablar como si le explicaras a un amigo, no desde el estrado.
+El más crudo y cercano de todos. Primera persona. Hablar como si le explicaras algo a un amigo, no desde el estrado.
 Energía calmada-pero-presente. Sin guión que suene a guión.
 
 ## Qué evitar

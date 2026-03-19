@@ -16,7 +16,7 @@ Nombra algo que todos sienten pero nadie dice.
 ### 2. Contrarian
 Va contra la sabiduría popular o el consejo genérico.
 > "No, no necesitan 'hablar más'. Necesitan entender qué está tratando de decir el conflicto."
-> "El consejo de 'nunca te vayas a dormir enojado' puede ser dañino."
+> "El consejo de 'nunca te vayas a dormir enfadado' puede ser dañino."
 > "Estar muy enamorados al principio no predice nada sobre la durabilidad de la relación."
 
 ### 3. Patrón nombrado
@@ -26,9 +26,9 @@ Le da nombre a algo que el lector vive pero no puede articular.
 > "Cuando pelean por los platos, no están peleando por los platos."
 
 ### 4. Dato o ciencia sorprendente
-Âncora con investigación o estadística que rompe expectativas.
+Ancla con investigación o estadística que rompe expectativas.
 > "El 69% de los conflictos en parejas son irresolubles — y las parejas felices lo saben."
-> "Gottman predice el divorcio con 94% de precisión. Lo que mira no es lo que esperás."
+> "Gottman predice el divorcio con 94% de precisión. Lo que mira no es lo que esperas."
 > "La mayoría de parejas espera 6 años en promedio antes de buscar terapia. 6 años."
 
 ### 5. Historia (anonimizada o compuesta)
@@ -38,9 +38,9 @@ Una escena o situación que genera identificación inmediata.
 
 ### 6. Pregunta que duele
 Una pregunta que el lector ya se hizo pero temía hacerse.
-> "¿Y si no es que no te aman, sino que no saben amarte de la forma en que necesitás?"
+> "¿Y si no es que no te aman, sino que no saben amarte de la forma en que necesitas?"
 > "¿Estás en una relación difícil, o en una relación con una persona difícil?"
-> "¿Cuándo fue la última vez que tu pareja se sintió realmente escuchada por vos?"
+> "¿Cuándo fue la última vez que tu pareja se sintió realmente escuchada por ti?"
 
 ---
 
@@ -62,6 +62,6 @@ Una pregunta que el lector ya se hizo pero temía hacerse.
 - Un hook no debe explicarse a sí mismo — debe generar tensión, no resolverla
 - En video (TikTok/YouTube): el hook es hablado en los primeros 2–3 segundos
 - En texto (X/LinkedIn): el hook es la primera línea, antes del punto
-- No apiles dos hooks distintos — elegí uno y ejecutalo bien
+- No apiles dos hooks distintos — elige uno y ejecútalo bien
 
 Ver [[repurpose]] para cómo el mismo hook se adapta a distintos formatos.
