@@ -1,301 +1,311 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top 10 Triatletas — Distribución de tiempos esperados</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<!-- ═══════════════════════════════════════════════
+     INFOGRAFÍA TOP 10 TRIATLÓN — snippet embebible
+     Pega este bloque donde quieras en tu página.
+     No toca estilos ni layout externos.
+════════════════════════════════════════════════ -->
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #ffffff;
-      padding: 48px 44px 56px;
-      max-width: 780px;
-    }
+<style>
+  /* Todos los estilos están aislados bajo #tri-infografia */
+  #tri-infografia * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Header ── */
-    .label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: #999;
-      margin-bottom: 10px;
-    }
+  #tri-infografia {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    padding: 48px 44px 56px;
+    max-width: 780px;
+  }
 
-    .title {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 26px;
-      font-weight: 700;
-      color: #111;
-      line-height: 1.25;
-      margin-bottom: 8px;
-    }
+  /* ── Header ── */
+  #tri-infografia .tri-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #999;
+    margin-bottom: 10px;
+  }
 
-    .subtitle {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
+  #tri-infografia .tri-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
 
-    /* ── Legend ── */
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 18px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid #111;
-    }
+  #tri-infografia .tri-subtitle {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 12px;
-      color: #333;
-    }
+  /* ── Legend ── */
+  #tri-infografia .tri-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #111;
+  }
 
-    .legend-color {
-      width: 13px;
-      height: 13px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
+  #tri-infografia .tri-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #333;
+  }
 
-    /* ── Grid header ── */
-    .grid-header {
-      display: grid;
-      grid-template-columns: 44px 210px 1fr 82px;
-      gap: 12px;
-      padding: 0 0 8px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: #aaa;
-      border-bottom: 1px solid #e8e8e8;
-    }
+  #tri-infografia .tri-legend-color {
+    width: 13px;
+    height: 13px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
 
-    /* ── Athlete row ── */
-    .row {
-      display: grid;
-      grid-template-columns: 44px 210px 1fr 82px;
-      gap: 12px;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #f0f0f0;
-      position: relative;
-    }
+  /* ── Grid header ── */
+  #tri-infografia .tri-grid-header {
+    display: grid;
+    grid-template-columns: 44px 210px 1fr 82px;
+    gap: 12px;
+    padding: 0 0 8px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #aaa;
+    border-bottom: 1px solid #e8e8e8;
+  }
 
-    .row:last-child { border-bottom: none; }
+  /* ── Athlete row ── */
+  #tri-infografia .tri-row {
+    display: grid;
+    grid-template-columns: 44px 210px 1fr 82px;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+  }
 
-    /* Alternating background */
-    .row:nth-child(even) { background: #fafafa; margin: 0 -8px; padding: 10px 8px; }
+  #tri-infografia .tri-row:last-child { border-bottom: none; }
 
-    /* ── Rank badge ── */
-    .rank {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #111;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
+  #tri-infografia .tri-row:nth-child(even) {
+    background: #fafafa;
+    margin: 0 -8px;
+    padding: 10px 8px;
+  }
 
-    .rank-1 { background: #B8860B; }
-    .rank-2 { background: #7a7a7a; }
-    .rank-3 { background: #8B6347; }
+  /* ── Rank badge ── */
+  #tri-infografia .tri-rank {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
 
-    /* ── Athlete info ── */
-    .athlete-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: #111;
-      line-height: 1.3;
-    }
+  #tri-infografia .tri-rank-1 { background: #B8860B; }
+  #tri-infografia .tri-rank-2 { background: #7a7a7a; }
+  #tri-infografia .tri-rank-3 { background: #8B6347; }
 
-    .athlete-nat {
-      font-size: 12px;
-      color: #888;
-      margin-top: 2px;
-    }
+  /* ── Athlete info ── */
+  #tri-infografia .tri-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.3;
+  }
 
-    /* ── Bar ── */
-    .bar-wrap {
-      position: relative;
-    }
+  #tri-infografia .tri-nat {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+  }
 
-    .bar {
-      height: 30px;
-      display: flex;
-      border-radius: 3px;
-      overflow: hidden;
-    }
+  /* ── Bar ── */
+  #tri-infografia .tri-bar-wrap { position: relative; }
 
-    .seg {
-      height: 100%;
-      transition: filter 0.15s;
-      cursor: default;
-    }
+  #tri-infografia .tri-bar {
+    height: 30px;
+    display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+  }
 
-    /* ── Tooltip ── */
-    .bar-wrap:hover .tooltip { opacity: 1; pointer-events: none; }
+  #tri-infografia .tri-seg {
+    height: 100%;
+    transition: filter 0.15s;
+    cursor: default;
+  }
 
-    .tooltip {
-      opacity: 0;
-      position: absolute;
-      bottom: 38px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #111;
-      color: #fff;
-      font-size: 11.5px;
-      padding: 8px 12px;
-      border-radius: 5px;
-      white-space: nowrap;
-      z-index: 20;
-      line-height: 1.8;
-      transition: opacity 0.15s;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-    }
+  /* ── Tooltip ── */
+  #tri-infografia .tri-bar-wrap:hover .tri-tooltip {
+    opacity: 1;
+    pointer-events: none;
+  }
 
-    .tooltip::after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      border: 6px solid transparent;
-      border-top-color: #111;
-    }
+  #tri-infografia .tri-tooltip {
+    opacity: 0;
+    position: absolute;
+    bottom: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #fff;
+    font-size: 11.5px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    white-space: nowrap;
+    z-index: 20;
+    line-height: 1.8;
+    transition: opacity 0.15s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
 
-    .tooltip .t-label { color: #aaa; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  #tri-infografia .tri-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #111;
+  }
 
-    /* ── Total time ── */
-    .total {
-      font-size: 13px;
-      font-weight: 700;
-      color: #222;
-      text-align: right;
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums;
-    }
+  #tri-infografia .tri-t-label {
+    color: #aaa;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-    /* ── Segment colors ── */
-    .c-swim  { background: #0077B6; }
-    .c-bike  { background: #F4A261; }
-    .c-run   { background: #E63946; }
-    .c-trans { background: #D9D9D9; }
+  /* ── Total time ── */
+  #tri-infografia .tri-total {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
 
-    /* ── Footer ── */
-    .footer {
-      margin-top: 24px;
-      padding-top: 14px;
-      border-top: 1px solid #eee;
-      font-size: 11px;
-      color: #bbb;
-      line-height: 1.6;
-    }
-  </style>
-</head>
-<body>
+  /* ── Segment colors ── */
+  #tri-infografia .c-swim  { background: #0077B6; }
+  #tri-infografia .c-bike  { background: #F4A261; }
+  #tri-infografia .c-run   { background: #E63946; }
+  #tri-infografia .c-trans { background: #D9D9D9; }
 
-  <div class="label">Ironman · Análisis predictivo</div>
-  <div class="title">Distribución del tiempo esperado<br>por segmento — Top 10</div>
-  <div class="subtitle">
-    Proporción del tiempo esperado (Expected) dedicado a cada segmento.<br>
+  /* ── Footer ── */
+  #tri-infografia .tri-footer {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid #eee;
+    font-size: 11px;
+    color: #bbb;
+    line-height: 1.6;
+  }
+</style>
+
+<div id="tri-infografia">
+
+  <div class="tri-label">Ironman · Análisis predictivo</div>
+  <div class="tri-title">Distribución del tiempo esperado<br>por segmento — Top 10</div>
+  <div class="tri-subtitle">
+    Proporción del tiempo esperado dedicado a cada segmento.<br>
     Pasa el cursor sobre la barra para ver los tiempos exactos.
   </div>
 
-  <div class="legend">
-    <div class="legend-item"><div class="legend-color c-swim"></div>Natación</div>
-    <div class="legend-item"><div class="legend-color c-bike"></div>Ciclismo</div>
-    <div class="legend-item"><div class="legend-color c-run"></div>Carrera</div>
-    <div class="legend-item"><div class="legend-color c-trans"></div>Transiciones</div>
+  <div class="tri-legend">
+    <div class="tri-legend-item"><div class="tri-legend-color c-swim"></div>Natación</div>
+    <div class="tri-legend-item"><div class="tri-legend-color c-bike"></div>Ciclismo</div>
+    <div class="tri-legend-item"><div class="tri-legend-color c-run"></div>Carrera</div>
+    <div class="tri-legend-item"><div class="tri-legend-color c-trans"></div>Transiciones</div>
   </div>
 
-  <div class="grid-header">
+  <div class="tri-grid-header">
     <div></div>
     <div>Atleta</div>
     <div>Distribución del tiempo</div>
     <div style="text-align:right">Esperado</div>
   </div>
 
-  <div id="chart"></div>
+  <div id="tri-chart"></div>
 
-  <div class="footer">
+  <div class="tri-footer">
     Fuente: datos de predicción basados en historial del atleta.<br>
     Transiciones (T1 + T2) ≈ 5 min por atleta.
   </div>
 
-  <script>
-    const DATA = [
-      { rank: 1,  name: "Kristian Blummenfelt", nat: "🇳🇴 NOR", expected: 27080, swim: 2917, bike: 14510, run: 9354 },
-      { rank: 2,  name: "Casper Stornes",        nat: "🇳🇴 NOR", expected: 27236, swim: 2887, bike: 14484, run: 9566 },
-      { rank: 3,  name: "Antonio Benito Lopez",  nat: "🇪🇸 ESP", expected: 27422, swim: 2890, bike: 14521, run: 9712 },
-      { rank: 4,  name: "Rudy von Berg",         nat: "🇺🇸 USA", expected: 27576, swim: 2898, bike: 14564, run: 9814 },
-      { rank: 5,  name: "Jonas Schomburg",       nat: "🇩🇪 GER", expected: 27586, swim: 2853, bike: 14715, run: 9718 },
-      { rank: 6,  name: "Gustav Iden",           nat: "🇳🇴 NOR", expected: 27645, swim: 2946, bike: 14529, run: 9871 },
-      { rank: 7,  name: "Marten Van Riel",       nat: "🇧🇪 BEL", expected: 27649, swim: 2876, bike: 14740, run: 9733 },
-      { rank: 8,  name: "Magnus Ditlev",         nat: "🇩🇰 DEN", expected: 27725, swim: 3000, bike: 14557, run: 9868 },
-      { rank: 9,  name: "Patrick Lange",         nat: "🇩🇪 GER", expected: 27738, swim: 2972, bike: 15112, run: 9354 },
-      { rank: 10, name: "Vincent Luis",          nat: "🇫🇷 FRA", expected: 27874, swim: 2828, bike: 14751, run: 9996 },
-    ];
+</div>
 
-    function fmt(s) {
-      const h  = Math.floor(s / 3600);
-      const m  = Math.floor((s % 3600) / 60);
-      const ss = s % 60;
-      return `${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-    }
+<script>
+(function () {
+  var DATA = [
+    { rank: 1,  name: "Kristian Blummenfelt", nat: "🇳🇴 NOR", expected: 27080, swim: 2917, bike: 14510, run: 9354 },
+    { rank: 2,  name: "Casper Stornes",        nat: "🇳🇴 NOR", expected: 27236, swim: 2887, bike: 14484, run: 9566 },
+    { rank: 3,  name: "Antonio Benito Lopez",  nat: "🇪🇸 ESP", expected: 27422, swim: 2890, bike: 14521, run: 9712 },
+    { rank: 4,  name: "Rudy von Berg",         nat: "🇺🇸 USA", expected: 27576, swim: 2898, bike: 14564, run: 9814 },
+    { rank: 5,  name: "Jonas Schomburg",       nat: "🇩🇪 GER", expected: 27586, swim: 2853, bike: 14715, run: 9718 },
+    { rank: 6,  name: "Gustav Iden",           nat: "🇳🇴 NOR", expected: 27645, swim: 2946, bike: 14529, run: 9871 },
+    { rank: 7,  name: "Marten Van Riel",       nat: "🇧🇪 BEL", expected: 27649, swim: 2876, bike: 14740, run: 9733 },
+    { rank: 8,  name: "Magnus Ditlev",         nat: "🇩🇰 DEN", expected: 27725, swim: 3000, bike: 14557, run: 9868 },
+    { rank: 9,  name: "Patrick Lange",         nat: "🇩🇪 GER", expected: 27738, swim: 2972, bike: 15112, run: 9354 },
+    { rank: 10, name: "Vincent Luis",          nat: "🇫🇷 FRA", expected: 27874, swim: 2828, bike: 14751, run: 9996 },
+  ];
 
-    function pct(v, total) {
-      return (v / total * 100).toFixed(3) + '%';
-    }
+  function fmt(s) {
+    var h  = Math.floor(s / 3600);
+    var m  = Math.floor((s % 3600) / 60);
+    var ss = s % 60;
+    return h + ':' + String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
 
-    const chart = document.getElementById('chart');
+  function pct(v, total) {
+    return (v / total * 100).toFixed(3) + '%';
+  }
 
-    DATA.forEach(a => {
-      const trans = a.expected - a.swim - a.bike - a.run;
+  var chart = document.getElementById('tri-chart');
 
-      const rankClass = a.rank <= 3 ? ` rank-${a.rank}` : '';
+  DATA.forEach(function (a) {
+    var trans     = a.expected - a.swim - a.bike - a.run;
+    var rankExtra = a.rank <= 3 ? ' tri-rank-' + a.rank : '';
 
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.innerHTML = `
-        <div class="rank${rankClass}">${a.rank}</div>
+    var row = document.createElement('div');
+    row.className = 'tri-row';
+    row.innerHTML =
+      '<div class="tri-rank' + rankExtra + '">' + a.rank + '</div>' +
 
-        <div>
-          <div class="athlete-name">${a.name}</div>
-          <div class="athlete-nat">${a.nat}</div>
-        </div>
+      '<div>' +
+        '<div class="tri-name">' + a.name + '</div>' +
+        '<div class="tri-nat">'  + a.nat  + '</div>' +
+      '</div>' +
 
-        <div class="bar-wrap">
-          <div class="bar">
-            <div class="seg c-swim"  style="width:${pct(a.swim,  a.expected)}"></div>
-            <div class="seg c-bike"  style="width:${pct(a.bike,  a.expected)}"></div>
-            <div class="seg c-run"   style="width:${pct(a.run,   a.expected)}"></div>
-            <div class="seg c-trans" style="width:${pct(trans,   a.expected)}"></div>
-          </div>
-          <div class="tooltip">
-            <span class="t-label">Natación</span>  ${fmt(a.swim)}<br>
-            <span class="t-label">Ciclismo &nbsp;</span>  ${fmt(a.bike)}<br>
-            <span class="t-label">Carrera &nbsp;&nbsp;</span>  ${fmt(a.run)}<br>
-            <span class="t-label">Transic. &nbsp;</span>  ${fmt(trans)}
-          </div>
-        </div>
+      '<div class="tri-bar-wrap">' +
+        '<div class="tri-bar">' +
+          '<div class="tri-seg c-swim"  style="width:' + pct(a.swim,  a.expected) + '"></div>' +
+          '<div class="tri-seg c-bike"  style="width:' + pct(a.bike,  a.expected) + '"></div>' +
+          '<div class="tri-seg c-run"   style="width:' + pct(a.run,   a.expected) + '"></div>' +
+          '<div class="tri-seg c-trans" style="width:' + pct(trans,   a.expected) + '"></div>' +
+        '</div>' +
+        '<div class="tri-tooltip">' +
+          '<span class="tri-t-label">Natación</span> ' + fmt(a.swim)  + '<br>' +
+          '<span class="tri-t-label">Ciclismo&nbsp;</span> ' + fmt(a.bike)  + '<br>' +
+          '<span class="tri-t-label">Carrera&nbsp;&nbsp;</span> ' + fmt(a.run)   + '<br>' +
+          '<span class="tri-t-label">Transic.&nbsp;</span> ' + fmt(trans) +
+        '</div>' +
+      '</div>' +
 
-        <div class="total">${fmt(a.expected)}</div>
-      `;
-      chart.appendChild(row);
-    });
-  </script>
+      '<div class="tri-total">' + fmt(a.expected) + '</div>';
 
-</body>
-</html>
+    chart.appendChild(row);
+  });
+}());
+</script>
