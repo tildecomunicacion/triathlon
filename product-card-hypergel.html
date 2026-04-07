@@ -1,0 +1,182 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+  .pe-ficha-producto {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 30px 0;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .pe-ficha-producto:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  .pe-ficha-badge {
+    position: absolute;
+    top: -12px;
+    right: 30px;
+    background-color: #ef4444;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 5px 12px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+  }
+
+  .pe-ficha-img-wrapper {
+    flex: 0 0 220px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pe-ficha-img-wrapper img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  .pe-ficha-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .pe-ficha-brand {
+    font-size: 14px;
+    color: #106fdf;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .pe-ficha-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #171717;
+    margin: 0 0 8px 0;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+
+  .pe-ficha-desc {
+    font-size: 14px;
+    color: #52525b;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+  }
+
+  .pe-ficha-desc strong {
+    color: #171717;
+    font-weight: 700;
+  }
+
+  .pe-ficha-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .pe-ficha-price {
+    font-size: 28px;
+    font-weight: 900;
+    color: #171717;
+    line-height: 1;
+    letter-spacing: -1px;
+    margin: 0;
+  }
+
+  .pe-ficha-btn {
+    display: inline-block;
+    flex: 0 1 300px;
+    background-color: #106fdf;
+    color: #ffffff !important;
+    text-align: center;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .pe-ficha-btn:hover {
+    background-color: #0050e0;
+    color: #ffffff !important;
+    text-decoration: none;
+  }
+
+  @media (max-width: 650px) {
+    .pe-ficha-producto {
+      flex-direction: column;
+      text-align: center;
+      padding: 30px 20px 24px;
+    }
+    .pe-ficha-img-wrapper {
+      width: 100%;
+      max-width: 250px;
+    }
+    .pe-ficha-bottom-row {
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+    }
+    .pe-ficha-btn {
+      width: 100%;
+      flex: none;
+    }
+    .pe-ficha-badge {
+      right: auto;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+</style>
+
+<div class="pe-ficha-producto">
+  <div class="pe-ficha-badge">GEL ENERGÉTICO</div>
+
+  <div class="pe-ficha-img-wrapper">
+    <img src="https://planetaendurance.com/wp-content/uploads/2026/03/hypergel-30-hydro-cuadrado.webp" alt="HYPER(1:0,8) LINE HyperGel 30 Hydro" width="220" height="220">
+  </div>
+
+  <div class="pe-ficha-info">
+    <div class="pe-ficha-brand">HYPER(1:0,8) LINE</div>
+    <h3 class="pe-ficha-title">HyperGel 30 (1:0,8) Hydro</h3>
+
+    <p class="pe-ficha-desc">
+      Gel energético con <strong>30 g de hidratos de carbono</strong> en relación <strong>1:0,8 maltodextrina:fructosa</strong> y un extra de sodio (110 mg y 400 mg en sabor plátano y cacahuete salado). Textura muy líquida (hydro), <strong>sin edulcorantes ni colorantes</strong>. Versión sin y con <strong>cafeína (80 mg)</strong>. Envío gratuito.
+    </p>
+
+    <div class="pe-ficha-bottom-row">
+      <div class="pe-ficha-price">2,49€ – 24,90€</div>
+
+      <a href="https://www.hyper108.com/products/hypergel-30-hydro" class="pe-ficha-btn" target="_blank" rel="nofollow noopener">
+        Ver Producto en HYPER LINE
+      </a>
+    </div>
+  </div>
+</div>
