@@ -1,0 +1,2311 @@
+<title>Coste real de un IRONMAN</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: una columna editorial estrecha para el texto, la calculadora a ancho
+   completo con su panel de resultado pegado a la derecha. */
+:root {
+    --pt-fondo: #fbfaf8;
+    --pt-superficie: #ffffff;
+    --pt-tinta: #11161d;
+    --pt-tinta-2: #5d6774;
+    --pt-linea: #e3e6ec;
+    --pt-acento: #e8431f;
+    --pt-verde: #0b7f6b;
+    --pt-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    --pt-texto: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --pt-fondo: #0e1217;
+        --pt-superficie: #151a21;
+        --pt-tinta: #eef2f7;
+        --pt-tinta-2: #9aa6b4;
+        --pt-linea: #2a313b;
+        --pt-acento: #ff6a45;
+        --pt-verde: #3fd1b0;
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    --pt-fondo: #0e1217;
+    --pt-superficie: #151a21;
+    --pt-tinta: #eef2f7;
+    --pt-tinta-2: #9aa6b4;
+    --pt-linea: #2a313b;
+    --pt-acento: #ff6a45;
+    --pt-verde: #3fd1b0;
+    color-scheme: dark;
+}
+
+body {
+    background: var(--pt-fondo);
+    color: var(--pt-tinta);
+    font-family: var(--pt-texto);
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.pt-shell {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 40px 56px;
+}
+
+.pt-kicker {
+    font-family: var(--pt-display);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pt-acento);
+    margin: 0 0 10px;
+}
+
+h1 {
+    font-family: var(--pt-display);
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: 1.02;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+}
+
+.pt-entradilla {
+    max-width: 62ch;
+    font-size: 17.5px;
+    color: var(--pt-tinta-2);
+    margin: 0 0 10px;
+}
+
+.pt-entradilla strong { color: var(--pt-tinta); font-weight: 600; }
+
+.pt-dos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 26px 0 34px;
+    max-width: 760px;
+}
+
+.pt-dos div {
+    border-left: 3px solid var(--pt-acento);
+    padding: 2px 0 2px 14px;
+}
+
+.pt-dos div:last-child { border-left-color: var(--pt-verde); }
+
+.pt-dos h2 {
+    font-family: var(--pt-display);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: 14px;
+    margin: 0 0 4px;
+}
+
+.pt-dos p { margin: 0; font-size: 14.5px; color: var(--pt-tinta-2); }
+
+.pt-sep { border: 0; border-top: 1px solid var(--pt-linea); margin: 36px 0; }
+
+h2.pt-h2 {
+    font-family: var(--pt-display);
+    font-size: 28px;
+    margin: 0 0 6px;
+    text-wrap: balance;
+}
+
+.pt-notas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.pt-nota {
+    min-width: 0;
+    background: var(--pt-superficie);
+    border: 1px solid var(--pt-linea);
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.pt-nota h3 {
+    font-family: var(--pt-display);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: 13.5px;
+    margin: 0 0 8px;
+    color: var(--pt-acento);
+}
+
+.pt-nota p { margin: 0; font-size: 14.5px; color: var(--pt-tinta-2); }
+.pt-nota code { font-size: 13px; background: var(--pt-fondo); padding: 1px 5px; border-radius: 4px; }
+
+.pt-pie { margin-top: 32px; font-size: 13.5px; color: var(--pt-tinta-2); max-width: 70ch; }
+
+/* La calculadora hereda la tipografía de la página y los dos temas. */
+.icc { font-family: var(--pt-texto); margin: 0 0 8px; }
+.icc-head__big, .icc-kpis span, .icc-grupo__tot, .icc-tabla td { font-variant-numeric: tabular-nums; }
+.icc-card__title, .icc-head__big { font-family: var(--pt-display); }
+.icc-head__big { font-size: 40px; letter-spacing: 0; }
+.icc-card__title { font-size: 21px; text-transform: uppercase; letter-spacing: .03em; }
+
+:root[data-theme="dark"] .icc {
+    --icc-tinta: #eef2f7;
+    --icc-tinta-2: #9aa6b4;
+    --icc-linea: #2a313b;
+    --icc-fondo: #151a21;
+    --icc-fondo-2: #1d242c;
+    --icc-acento: #ff6a45;
+    --icc-acento-2: #3fd1b0;
+}
+
+:root[data-theme="dark"] .icc .icc-perfil.is-on { background: #2c1d19; }
+:root[data-theme="dark"] .icc .icc-tag--contrastado { background: #11362f; color: #6fd9c0; }
+:root[data-theme="dark"] .icc .icc-tag--estimacion { background: #3a2c17; color: #e0b464; }
+:root[data-theme="dark"] .icc .icc-seg button.is-on { background: var(--icc-acento); color: #19120f; }
+
+:root[data-theme="light"] .icc {
+    --icc-tinta: #10151c;
+    --icc-tinta-2: #5a6472;
+    --icc-linea: #e4e8ee;
+    --icc-fondo: #ffffff;
+    --icc-fondo-2: #f6f8fa;
+    --icc-acento: #e8431f;
+    --icc-acento-2: #0b7f6b;
+}
+
+:focus-visible { outline: 2px solid var(--pt-acento); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
+
+/* Calculadora de coste real IRONMAN — estilos de frontend */
+
+.icc {
+    --icc-tinta: #10151c;
+    --icc-tinta-2: #5a6472;
+    --icc-linea: #e4e8ee;
+    --icc-fondo: #ffffff;
+    --icc-fondo-2: #f6f8fa;
+    --icc-acento: #e8431f;
+    --icc-acento-2: #0b7f6b;
+    --icc-wa: #25d366;
+    --icc-radio: 12px;
+
+    max-width: 1120px;
+    margin: 32px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--icc-tinta);
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.icc *, .icc *::before, .icc *::after { box-sizing: border-box; }
+
+.icc-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ------------------------------------------------------------- tarjetas */
+
+.icc-card {
+    background: var(--icc-fondo);
+    border: 1px solid var(--icc-linea);
+    border-radius: var(--icc-radio);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.icc-card__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--icc-tinta);
+}
+
+.icc-card__title span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--icc-acento);
+    color: #fff;
+    font-size: 14px;
+    flex: 0 0 26px;
+}
+
+.icc-card__intro {
+    margin: 0 0 16px;
+    color: var(--icc-tinta-2);
+    font-size: 13.5px;
+}
+
+/* --------------------------------------------------------------- campos */
+
+.icc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.icc-f { display: flex; flex-direction: column; gap: 5px; }
+
+.icc-f__label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--icc-tinta-2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icc-f__help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--icc-fondo-2);
+    border: 1px solid var(--icc-linea);
+    font-size: 10px;
+    cursor: help;
+    color: var(--icc-tinta-2);
+}
+
+.icc-f__input { position: relative; display: flex; align-items: center; }
+
+.icc input[type="number"],
+.icc select {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--icc-linea);
+    border-radius: 8px;
+    background: var(--icc-fondo);
+    color: var(--icc-tinta);
+    font-size: 14px;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.icc select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%235a6472' d='M0 0h10L5 6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    padding-right: 30px;
+}
+
+.icc input[type="number"]:focus,
+.icc select:focus {
+    outline: 2px solid var(--icc-acento);
+    outline-offset: -1px;
+    border-color: var(--icc-acento);
+}
+
+.icc-f__suffix {
+    position: absolute;
+    right: 11px;
+    font-size: 12.5px;
+    color: var(--icc-tinta-2);
+    pointer-events: none;
+}
+
+.icc-f__input:has(.icc-f__suffix) input { padding-right: 34px; }
+
+.icc-f__note { font-size: 11.5px; color: var(--icc-tinta-2); }
+
+.icc-checks { margin-top: 16px; display: grid; gap: 9px; }
+
+.icc-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13.5px;
+    cursor: pointer;
+}
+
+.icc-check input { margin: 2px 0 0; accent-color: var(--icc-acento); }
+
+/* -------------------------------------------------------------- perfiles */
+
+.icc-perfiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.icc-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+    padding: 11px 13px;
+    border: 1px solid var(--icc-linea);
+    border-radius: 10px;
+    background: var(--icc-fondo-2);
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--icc-tinta);
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.icc-perfil strong { font-size: 13.5px; }
+.icc-perfil span { font-size: 11.5px; color: var(--icc-tinta-2); }
+.icc-perfil:hover { border-color: var(--icc-acento); }
+.icc-perfil.is-on { border-color: var(--icc-acento); background: #fff3f0; }
+
+/* -------------------------------------------------------------- material */
+
+.icc-mats { display: grid; gap: 12px; }
+
+.icc-mat {
+    border: 1px solid var(--icc-linea);
+    border-radius: 10px;
+    padding: 13px;
+    background: var(--icc-fondo);
+}
+
+.icc-mat__head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.icc-mat__name { font-weight: 650; font-size: 14.5px; }
+.icc-mat__range { font-size: 11.5px; color: var(--icc-tinta-2); white-space: nowrap; }
+.icc-mat__note { margin: 5px 0 0; font-size: 12px; color: var(--icc-tinta-2); }
+
+.icc-mat__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.icc-seg { display: inline-flex; border: 1px solid var(--icc-linea); border-radius: 8px; overflow: hidden; }
+
+.icc-seg button {
+    padding: 8px 11px;
+    border: 0;
+    border-right: 1px solid var(--icc-linea);
+    background: var(--icc-fondo);
+    font-size: 12.5px;
+    font-family: inherit;
+    color: var(--icc-tinta-2);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.icc-seg button:last-child { border-right: 0; }
+.icc-seg button:hover { background: var(--icc-fondo-2); }
+.icc-seg button.is-on { background: var(--icc-tinta); color: #fff; }
+
+.icc-mat__out { margin-top: 9px; font-size: 12.5px; color: var(--icc-tinta-2); }
+.icc-mat__out strong { color: var(--icc-tinta); font-size: 14px; }
+.icc-mat__off { opacity: .6; }
+
+/* ------------------------------------------------------------- resultado */
+
+.icc-res { position: sticky; top: 20px; }
+
+.icc-res__inner {
+    background: var(--icc-fondo);
+    border: 1px solid var(--icc-linea);
+    border-radius: var(--icc-radio);
+    overflow: hidden;
+}
+
+.icc-head { padding: 18px 20px; border-bottom: 1px solid var(--icc-linea); }
+.icc-head--alt { background: var(--icc-fondo-2); }
+
+.icc-head__kicker {
+    margin: 0 0 4px;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 700;
+    color: var(--icc-tinta-2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icc-head__big { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; }
+.icc-head--alt .icc-head__big { color: var(--icc-acento-2); }
+.icc-head__band { margin: 3px 0 0; font-size: 12.5px; color: var(--icc-tinta-2); }
+
+.icc-kpis {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--icc-linea);
+}
+
+.icc-kpis li {
+    padding: 13px 16px;
+    border-right: 1px solid var(--icc-linea);
+    border-bottom: 1px solid var(--icc-linea);
+}
+
+.icc-kpis li:nth-child(2n) { border-right: 0; }
+.icc-kpis li:nth-last-child(-n+2) { border-bottom: 0; }
+.icc-kpis span { display: block; font-size: 18px; font-weight: 700; }
+.icc-kpis small { display: block; font-size: 11px; color: var(--icc-tinta-2); line-height: 1.3; margin-top: 2px; }
+
+.icc-margen { padding: 14px 20px; border-bottom: 1px solid var(--icc-linea); font-size: 12.5px; color: var(--icc-tinta-2); }
+.icc-margen label { display: block; }
+.icc-margen strong { color: var(--icc-tinta); }
+.icc-margen input[type="range"] { width: 100%; margin-top: 7px; accent-color: var(--icc-acento); }
+
+/* -------------------------------------------------------------- desglose */
+
+.icc-desglose { padding: 6px 20px 14px; max-height: 420px; overflow-y: auto; }
+
+.icc-grupo { padding: 12px 0; border-bottom: 1px dashed var(--icc-linea); }
+.icc-grupo:last-child { border-bottom: 0; }
+
+.icc-grupo__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.icc-grupo__tot { font-variant-numeric: tabular-nums; }
+
+.icc-bar { height: 4px; background: var(--icc-fondo-2); border-radius: 2px; margin: 7px 0 9px; overflow: hidden; }
+.icc-bar i { display: block; height: 100%; background: var(--icc-acento); }
+
+.icc-tabla { width: 100%; border-collapse: collapse; }
+
+.icc-tabla th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 12.5px;
+    padding: 5px 8px 5px 0;
+    vertical-align: top;
+}
+
+.icc-tabla td {
+    text-align: right;
+    font-size: 13px;
+    font-weight: 650;
+    padding: 5px 0;
+    white-space: nowrap;
+    vertical-align: top;
+    font-variant-numeric: tabular-nums;
+}
+
+.icc-tabla__det { display: block; font-size: 11px; color: var(--icc-tinta-2); font-weight: 400; margin-top: 2px; }
+.icc-tabla__alt { display: block; font-size: 10.5px; color: var(--icc-tinta-2); font-weight: 400; }
+
+.icc-tag {
+    display: inline-block;
+    font-style: normal;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--icc-fondo-2);
+    color: var(--icc-tinta-2);
+    vertical-align: 1px;
+}
+
+.icc-tag--contrastado { background: #e3f5f0; color: #0b6b5a; }
+.icc-tag--estimacion { background: #fdf2e6; color: #9a6314; }
+
+/* -------------------------------------------------------------- acciones */
+
+.icc-acciones { padding: 14px 20px; display: grid; gap: 9px; border-top: 1px solid var(--icc-linea); }
+
+.icc-btn {
+    display: block;
+    text-align: center;
+    padding: 12px 14px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.icc-btn--wa { background: var(--icc-wa); color: #06301a; }
+.icc-btn--wa:hover { filter: brightness(.95); }
+.icc-btn--ghost { background: var(--icc-fondo); border: 1px solid var(--icc-linea); color: var(--icc-tinta); }
+.icc-btn--ghost:hover { background: var(--icc-fondo-2); }
+
+/* -------------------------------------------------------------- supuestos */
+
+.icc-supuestos { border-top: 1px solid var(--icc-linea); }
+
+.icc-supuestos summary {
+    padding: 13px 20px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 650;
+    color: var(--icc-tinta-2);
+}
+
+.icc-fuentes { list-style: none; margin: 0; padding: 0 20px 16px; display: grid; gap: 12px; }
+.icc-fuentes li { font-size: 11.5px; color: var(--icc-tinta-2); }
+.icc-fuentes strong { display: inline; color: var(--icc-tinta); font-size: 12.5px; }
+.icc-fuentes span { display: block; margin-top: 3px; }
+.icc-fuentes small { display: block; margin-top: 2px; opacity: .8; }
+
+.icc-legal { margin: 0; padding: 0 20px 18px; font-size: 11px; color: var(--icc-tinta-2); }
+
+/* -------------------------------------------------------------- responsive */
+
+@media (max-width: 900px) {
+    .icc-wrap { grid-template-columns: minmax(0, 1fr); }
+    .icc-res { position: static; order: -1; }
+    .icc-mat__controls { grid-template-columns: minmax(0, 1fr); }
+    .icc-seg { overflow-x: auto; }
+    .icc-head__big { font-size: 30px; }
+    .icc-desglose { max-height: none; }
+}
+
+@media (max-width: 480px) {
+    .icc { margin: 20px auto; font-size: 14.5px; }
+    .icc-card { padding: 16px; }
+    .icc-grid { grid-template-columns: minmax(0, 1fr); }
+    .icc-seg button { padding: 8px; font-size: 12px; }
+}
+
+/* -------------------------------------------------------------- oscuro */
+
+@media (prefers-color-scheme: dark) {
+    .icc:not([data-tema="claro"]) {
+        --icc-tinta: #eef2f7;
+        --icc-tinta-2: #9aa6b4;
+        --icc-linea: #2a313b;
+        --icc-fondo: #151a21;
+        --icc-fondo-2: #1d242c;
+        --icc-acento: #ff6a45;
+        --icc-acento-2: #3fd1b0;
+    }
+    .icc:not([data-tema="claro"]) .icc-perfil.is-on { background: #2c1d19; }
+    .icc:not([data-tema="claro"]) .icc-tag--contrastado { background: #11362f; color: #6fd9c0; }
+    .icc:not([data-tema="claro"]) .icc-tag--estimacion { background: #3a2c17; color: #e0b464; }
+    .icc:not([data-tema="claro"]) .icc-seg button.is-on { background: var(--icc-acento); color: #19120f; }
+}
+
+.icc[data-tema="oscuro"] {
+    --icc-tinta: #eef2f7;
+    --icc-tinta-2: #9aa6b4;
+    --icc-linea: #2a313b;
+    --icc-fondo: #151a21;
+    --icc-fondo-2: #1d242c;
+    --icc-acento: #ff6a45;
+    --icc-acento-2: #3fd1b0;
+}
+
+</style>
+
+<div class="pt-shell">
+    <p class="pt-kicker">Herramienta</p>
+    <h1>Lo que cuesta de verdad tu IRONMAN</h1>
+    <p class="pt-entradilla">
+        La inscripción es la primera factura, no la única. Material, entrenamiento, nutrición, viaje y
+        alojamiento pesan tanto o más. Esta calculadora suma todas las partidas y da
+        <strong>dos cifras distintas</strong>, porque no son lo mismo.
+    </p>
+
+    <div class="pt-dos">
+        <div>
+            <h2>Desembolso de la temporada</h2>
+            <p>El dinero que sale de tu cuenta este año. Lo que necesitas tener.</p>
+        </div>
+        <div>
+            <h2>Coste real de la temporada</h2>
+            <p>Lo que de verdad te cuesta el año: el material duradero cuenta solo la parte que se gasta.</p>
+        </div>
+    </div>
+
+    <div class="icc"></div>
+
+    <hr class="pt-sep">
+
+    <h2 class="pt-h2">Cómo está calculado</h2>
+    <p class="pt-entradilla">
+        Sin cifra cerrada y a propósito: los precios cambian cada temporada, de una prueba a otra y
+        según el país. Lo que hace fiable el número no es el precio de hoy, es el método.
+    </p>
+
+    <div class="pt-notas">
+        <div class="pt-nota">
+            <h3>El material se amortiza</h3>
+            <p>
+                <code>(precio − valor residual) ÷ temporadas de vida</code>. Una bici de 5.000 € que dura
+                7 temporadas y se revende por el 35 % cuesta 464 € al año, no 5.000. Por eso quien ya
+                tiene el material no tiene coste cero, y quien compra de cero paga más de lo que le cuesta.
+            </p>
+        </div>
+        <div class="pt-nota">
+            <h3>Los consumibles los marca el volumen</h3>
+            <p>
+                Las zapatillas salen de tus kilómetros de carrera y de tu peso, no del calendario. La
+                cadena y las cubiertas, de los kilómetros de bici. La nutrición, de las horas de sesión
+                larga a 70 g de hidratos por hora.
+            </p>
+        </div>
+        <div class="pt-nota">
+            <h3>Cada dato lleva su fuente</h3>
+            <p>
+                En «Ver supuestos y fuentes» está de dónde sale cada cifra, con fecha, y si es un dato
+                contrastado o una estimación de mercado. Lo que no se puede afirmar, no se afirma.
+            </p>
+        </div>
+        <div class="pt-nota">
+            <h3>Devuelve una horquilla</h3>
+            <p>
+                Mínimo, escenario central y máximo, más el margen para imprevistos que tú decidas. Una
+                cifra exacta en esto sería mentira; una horquilla con sus supuestos sirve para decidir.
+            </p>
+        </div>
+    </div>
+
+    <p class="pt-pie">
+        Esta versión es la demo pública del modelo. En producción se instala como plugin de WordPress con
+        el shortcode <code>[calculadora_ironman]</code>: ahí el botón de WhatsApp manda el desglose al
+        número que se configure y los precios de las gamas de material se pueden sustituir por el precio
+        real de modelos concretos, leído de la tienda y refrescado a diario.
+    </p>
+</div>
+
+<script>
+/**
+ * Calculadora de coste real IRONMAN — tabla de datos.
+ *
+ * TODO precio, vida útil y consumo vive aquí. El motor (icc-engine.js) no
+ * contiene ni un número: así la calculadora se actualiza cambiando esta tabla
+ * (o sobreescribiéndola desde el admin de WordPress) sin tocar la lógica.
+ *
+ * Cada entrada lleva `fuente` y `fecha`. Lo que no está verificado se marca
+ * con `fiabilidad: 'estimacion'` y se muestra como tal en la interfaz.
+ *
+ * precio: [min, max] en euros. La calculadora usa la media como escenario
+ * central y los extremos para la horquilla.
+ * vida_temporadas: temporadas de uso antes de reponer.
+ * residual: fracción del precio que se recupera vendiéndolo de segunda mano.
+ */
+(function (root) {
+    'use strict';
+
+    var DATA = {
+        version: '1.0.0',
+        actualizado: '2026-10-18',
+        moneda: '€',
+
+        /* ------------------------------------------------------------------
+         * 1. BIENES DURADEROS — se amortizan entre temporadas
+         * ------------------------------------------------------------------ */
+        equipo: [
+            {
+                id: 'bici',
+                label: 'Bici',
+                grupo: 'material',
+                nota: 'Una carretera con acoples bien ajustada termina un IRONMAN. La cabra ahorra tiempo, no es obligatoria.',
+                vida_temporadas: 7,
+                residual: 0.35,
+                alquiler: [180, 400],
+                alquiler_unidad: 'semana de carrera',
+                opciones: [
+                    { id: 'carretera_2mano', label: 'Carretera + acoples (segunda mano)', precio: [900, 1800] },
+                    { id: 'carretera_nueva', label: 'Carretera + acoples (nueva)', precio: [1800, 3500] },
+                    { id: 'tt_entrada', label: 'Cabra de contrarreloj, gama entrada', precio: [2800, 4500] },
+                    { id: 'tt_media', label: 'Cabra de contrarreloj, gama media', precio: [4500, 7500] },
+                    { id: 'tt_alta', label: 'Cabra de contrarreloj, gama alta', precio: [8000, 14000] }
+                ],
+                defecto: { opcion: 'carretera_nueva', situacion: 'tengo' },
+                fuente: 'Horquillas de mercado en tiendas especializadas de España. Vida útil: 7–10 años para un cuadro de carbono bien mantenido.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'acoples',
+                label: 'Acoples (si montas carretera)',
+                grupo: 'material',
+                vida_temporadas: 5,
+                residual: 0.2,
+                opciones: [
+                    { id: 'basicos', label: 'Acoples básicos', precio: [60, 120] },
+                    { id: 'buenos', label: 'Acoples con apoyos regulables', precio: [120, 280] }
+                ],
+                defecto: { opcion: 'basicos', situacion: 'compro' },
+                fuente: 'Precio de catálogo de tiendas especializadas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'estudio',
+                label: 'Estudio biomecánico',
+                grupo: 'material',
+                nota: 'La inversión que más rinde en 180 km. Se rehace al cambiar de bici o de posición.',
+                vida_temporadas: 3,
+                residual: 0,
+                opciones: [
+                    { id: 'basico', label: 'Estudio básico', precio: [90, 150] },
+                    { id: 'completo', label: 'Estudio completo con seguimiento', precio: [150, 300] }
+                ],
+                defecto: { opcion: 'basico', situacion: 'compro' },
+                fuente: 'Tarifas publicadas por centros de biomecánica en España.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'ruedas',
+                label: 'Ruedas de perfil',
+                grupo: 'material',
+                nota: 'Mejora la experiencia, no decide si terminas.',
+                vida_temporadas: 6,
+                residual: 0.35,
+                alquiler: [80, 180],
+                alquiler_unidad: 'fin de semana',
+                opciones: [
+                    { id: 'aluminio', label: 'Perfil medio aluminio/carbono', precio: [350, 800] },
+                    { id: 'carbono', label: 'Carbono de perfil alto', precio: [900, 2500] },
+                    { id: 'disco', label: 'Rueda lenticular + delantera', precio: [1500, 3500] }
+                ],
+                defecto: { opcion: 'aluminio', situacion: 'no_uso' },
+                fuente: 'Horquillas de mercado en tiendas especializadas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'potenciometro',
+                label: 'Potenciómetro',
+                grupo: 'material',
+                nota: 'Ayuda a entrenar y a dosificar. No hace falta para terminar.',
+                vida_temporadas: 6,
+                residual: 0.25,
+                opciones: [
+                    { id: 'unilateral', label: 'Unilateral (una biela)', precio: [300, 550] },
+                    { id: 'bilateral', label: 'Bilateral / pedales', precio: [600, 1300] }
+                ],
+                defecto: { opcion: 'unilateral', situacion: 'no_uso' },
+                fuente: 'Horquillas de mercado en tiendas especializadas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'casco',
+                label: 'Casco',
+                grupo: 'material',
+                nota: 'Los fabricantes recomiendan reponer cada 3–5 años, y siempre después de un golpe.',
+                vida_temporadas: 4,
+                residual: 0,
+                opciones: [
+                    { id: 'ruta', label: 'Casco de ruta', precio: [60, 180] },
+                    { id: 'aero', label: 'Casco aero / cronoescalada', precio: [150, 400] }
+                ],
+                defecto: { opcion: 'ruta', situacion: 'tengo' },
+                fuente: 'Recomendación habitual de fabricantes (3–5 años) y precios de catálogo.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'pedales_zapatillas',
+                label: 'Pedales + zapatillas de ciclismo',
+                grupo: 'material',
+                vida_temporadas: 5,
+                residual: 0.1,
+                opciones: [
+                    { id: 'basico', label: 'Conjunto básico', precio: [120, 250] },
+                    { id: 'medio', label: 'Conjunto gama media', precio: [250, 500] }
+                ],
+                defecto: { opcion: 'basico', situacion: 'tengo' },
+                fuente: 'Precios de catálogo de tiendas especializadas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'neopreno',
+                label: 'Neopreno',
+                grupo: 'material',
+                nota: 'Obligatorio por debajo de 16 °C de agua, prohibido a partir de 24 °C. Se puede alquilar por temporada.',
+                vida_temporadas: 4,
+                residual: 0.1,
+                alquiler: [60, 140],
+                alquiler_unidad: 'temporada',
+                opciones: [
+                    { id: 'entrada', label: 'Gama entrada', precio: [150, 280] },
+                    { id: 'medio', label: 'Gama media', precio: [280, 450] },
+                    { id: 'alto', label: 'Gama alta', precio: [450, 800] }
+                ],
+                defecto: { opcion: 'entrada', situacion: 'compro' },
+                fuente: 'Precios de catálogo (Orca, Zone3, Decathlon). Norma de temperatura: reglamento de uso de neopreno en triatlón.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'mono',
+                label: 'Mono de competición (trisuit)',
+                grupo: 'material',
+                vida_temporadas: 3,
+                residual: 0,
+                opciones: [
+                    { id: 'entrada', label: 'Gama entrada', precio: [70, 140] },
+                    { id: 'medio', label: 'Gama media/larga distancia', precio: [140, 300] }
+                ],
+                defecto: { opcion: 'entrada', situacion: 'compro' },
+                fuente: 'Precios de catálogo de tiendas especializadas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'rodillo',
+                label: 'Rodillo',
+                grupo: 'material',
+                nota: 'Opcional, pero quien entrena en invierno o con poca luz lo acaba usando.',
+                vida_temporadas: 6,
+                residual: 0.3,
+                opciones: [
+                    { id: 'simple', label: 'Rodillo de rodillos / básico', precio: [120, 300] },
+                    { id: 'interactivo', label: 'Rodillo interactivo (transmisión directa)', precio: [450, 1400] }
+                ],
+                defecto: { opcion: 'interactivo', situacion: 'no_uso' },
+                fuente: 'Horquillas de mercado en tiendas especializadas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'reloj',
+                label: 'Reloj multideporte',
+                grupo: 'material',
+                vida_temporadas: 4,
+                residual: 0.15,
+                opciones: [
+                    { id: 'entrada', label: 'Gama entrada con multideporte', precio: [200, 350] },
+                    { id: 'medio', label: 'Gama media', precio: [350, 600] },
+                    { id: 'alto', label: 'Gama alta / autonomía larga', precio: [600, 1000] }
+                ],
+                defecto: { opcion: 'entrada', situacion: 'tengo' },
+                fuente: 'Precios de catálogo (Garmin, Polar, Coros, Suunto).',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            {
+                id: 'maleta',
+                label: 'Maleta o caja de bici',
+                grupo: 'material',
+                nota: 'Solo si viajas en avión. Alquilarla suele salir mejor para una sola prueba.',
+                vida_temporadas: 8,
+                residual: 0.3,
+                alquiler: [40, 90],
+                alquiler_unidad: 'viaje',
+                opciones: [
+                    { id: 'blanda', label: 'Funda blanda', precio: [120, 280] },
+                    { id: 'rigida', label: 'Maleta rígida', precio: [300, 700] }
+                ],
+                defecto: { opcion: 'blanda', situacion: 'no_uso' },
+                fuente: 'Precios de catálogo y tarifas de alquiler de tiendas de triatlón.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            }
+        ],
+
+        /* ------------------------------------------------------------------
+         * 2. CONSUMIBLES — el gasto lo marca el volumen de entrenamiento
+         * ------------------------------------------------------------------ */
+        consumibles: {
+            zapatillas: {
+                label: 'Zapatillas de entrenamiento',
+                precio: [90, 170],
+                vida_km: 700,
+                vida_km_rango: [500, 800],
+                penalizacion_peso: { desde_kg: 85, factor: 0.85 },
+                fuente: 'Rango más repetido en fabricantes y tiendas: 500–800 km. Salomon: 500–800 km; tiendas especializadas: 700–900 km. El peso del corredor acorta la vida útil.',
+                fecha: '2026-10',
+                fiabilidad: 'contrastado'
+            },
+            zapatillas_carrera: {
+                label: 'Zapatillas de competición (placa de carbono)',
+                precio: [200, 290],
+                vida_km: 350,
+                fuente: 'Las zapatillas con placa de carbono se agotan antes; se citan cifras en torno a 300 km.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            cadena: {
+                label: 'Cadena',
+                precio: [25, 45],
+                vida_km: 4000,
+                vida_km_rango: [3000, 6000],
+                fuente: 'Rango habitual 3.000–6.000 km según lubricación y mantenimiento; conviene medir el desgaste con un calibre.',
+                fecha: '2026-10',
+                fiabilidad: 'contrastado'
+            },
+            cassette: {
+                label: 'Cassette y transmisión',
+                precio: [50, 140],
+                cada_n_cadenas: 3,
+                fuente: 'Práctica de taller habitual: un cassette cada 2–3 cadenas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            cubiertas: {
+                label: 'Cubiertas',
+                precio: [45, 85],
+                unidades: 2,
+                vida_km: 4500,
+                vida_km_rango: [3000, 6000],
+                fuente: 'Cubiertas de gama alta: 3.000–6.000 km.',
+                fecha: '2026-10',
+                fiabilidad: 'contrastado'
+            },
+            fungibles_bici: {
+                label: 'Cámaras, pastillas, cinta de manillar, cables',
+                precio_anual: [40, 110],
+                fuente: 'Gasto anual estimado de taller.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            taller: {
+                label: 'Revisiones de taller',
+                precio: [60, 150],
+                veces_anio: 2,
+                nota: 'Una de ellas, la puesta a punto antes de la carrera.',
+                fuente: 'Tarifas de puesta a punto en talleres de España.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            nutricion: {
+                label: 'Nutrición deportiva',
+                g_hidratos_hora: 70,
+                g_hidratos_hora_rango: [60, 90],
+                precio_g: { comercial: [0.075, 0.11], mixto: [0.05, 0.075], casero: [0.025, 0.045] },
+                etiquetas: {
+                    comercial: 'Solo geles, barritas y bebida de marca',
+                    mixto: 'Mezcla de producto comercial y comida normal',
+                    casero: 'Sobre todo comida normal y bebida preparada en casa'
+                },
+                nota: 'Se consume en los entrenos largos, no solo el día de la carrera. Y hay que probarla entrenando.',
+                fuente: 'Pauta de 60–90 g de hidratos por hora en larga distancia; precio por gramo calculado sobre geles de 25–30 g a 2–3 € y bebidas en polvo a granel.',
+                fecha: '2026-10',
+                fiabilidad: 'contrastado'
+            },
+            natacion: {
+                label: 'Piscina y material de natación',
+                abono_mes: [30, 55],
+                entrada: [4.5, 8],
+                fungible_anual: [40, 90],
+                fungible_nota: 'Gafas, gorros y bañadores que se gastan con el cloro.',
+                fuente: 'Tarifas de piscinas municipales y privadas en España.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            }
+        },
+
+        /* ------------------------------------------------------------------
+         * 3. RECURRENTES — cada mes de preparación tiene su factura
+         * ------------------------------------------------------------------ */
+        recurrentes: {
+            entrenador: {
+                label: 'Entrenador',
+                mes: [50, 150],
+                mes_premium: [150, 300],
+                fuente: 'Entrenamiento online personalizado en España: 50–150 €/mes; planes premium con seguimiento muy cercano hasta 300 €/mes.',
+                fecha: '2026-10',
+                fiabilidad: 'contrastado'
+            },
+            fisio: {
+                label: 'Fisioterapia',
+                sesion: [35, 60],
+                sesiones_anio: 8,
+                fuente: 'Tarifa media de sesión de fisioterapia deportiva en España.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            licencia: {
+                label: 'Licencia federativa anual',
+                precio: [60, 130],
+                alternativa_dia: [12, 30],
+                alternativa_label: 'Seguro de un día (si no tienes licencia)',
+                fuente: 'Horquilla de licencias de federaciones autonómicas; el seguro de día lo cobra la organización.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            club: {
+                label: 'Cuota de club',
+                precio_anual: [60, 180],
+                fuente: 'Cuotas habituales de clubes de triatlón.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            suscripciones: {
+                label: 'Plataformas de entrenamiento (TrainingPeaks, Zwift, etc.)',
+                mes: [10, 25],
+                fuente: 'Tarifas públicas de las plataformas.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            },
+            seguro_bici: {
+                label: 'Seguro de la bici',
+                precio_anual: [60, 220],
+                fuente: 'Primas habituales para bicis de 2.000–8.000 €.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            }
+        },
+
+        /* ------------------------------------------------------------------
+         * 4. LA PRUEBA Y EL VIAJE
+         * ------------------------------------------------------------------ */
+        evento: {
+            inscripcion: {
+                full: { precio: [550, 900], central: 650 },
+                medio: { precio: [280, 480], central: 380 },
+                gestion_pct: 9,
+                nota: 'El dorsal sube por tramos a medida que se llena el cupo: apuntarse pronto es la única forma de pagar el precio bajo.',
+                fuente: 'Medias publicadas para la temporada 2026: ~650 € de media en un IRONMAN completo y 550–900 € en las pruebas europeas, más gastos de gestión. Referencia documentada de tramos: IRONMAN Vitoria pasó de 568 € en apertura a 650 € doce días antes, con un 9,25 % de gastos de gestión.',
+                fecha: '2026-10',
+                fiabilidad: 'contrastado'
+            },
+            viaje: {
+                coche_eur_km: 0.26,
+                coche_fuente: 'Importe por kilómetro exento de tributación en España (0,26 €/km), usado como referencia de coste real de combustible y desgaste.',
+                billete_avion: [80, 260],
+                tasa_bici_trayecto: [45, 75],
+                tasa_bici_fuente: 'Tarifas por trayecto de equipaje especial: Vueling desde 45 €, Iberia 40–50 € en corto y medio radio, Ryanair desde 60 € online.',
+                noche: [90, 180],
+                noches_defecto: 3,
+                noches_nota: 'La recogida del dorsal, la entrega de la bici en boxes y la reunión técnica obligan a llegar con uno o dos días de margen.',
+                dietas_dia: [30, 50],
+                extras: [40, 150],
+                extras_nota: 'Fotos oficiales, ropa de la prueba, la cena de después o una noche más porque el cuerpo no está para conducir.',
+                fecha: '2026-10',
+                fiabilidad: 'estimacion'
+            }
+        },
+
+        /* ------------------------------------------------------------------
+         * 5. VOLUMEN DE TEMPORADA (valores por defecto del preparatorio)
+         * ------------------------------------------------------------------ */
+        volumen: {
+            full: { semanas: 28, horas_semana: 11, km_bici: 6000, km_run: 1400, km_swim: 200, horas_largas_semana: 5 },
+            medio: { semanas: 20, horas_semana: 8, km_bici: 3800, km_run: 1100, km_swim: 150, horas_largas_semana: 3 }
+        },
+
+        /* ------------------------------------------------------------------
+         * 6. PERFILES — prerrellenan la situación del material
+         * ------------------------------------------------------------------ */
+        perfiles: {
+            cero: {
+                label: 'Empiezo de cero',
+                descripcion: 'Primer IRONMAN y casi todo por comprar.',
+                material: {
+                    bici: { opcion: 'carretera_nueva', situacion: 'compro' },
+                    acoples: { opcion: 'basicos', situacion: 'compro' },
+                    estudio: { opcion: 'basico', situacion: 'compro' },
+                    ruedas: { situacion: 'no_uso' },
+                    potenciometro: { situacion: 'no_uso' },
+                    casco: { opcion: 'ruta', situacion: 'compro' },
+                    pedales_zapatillas: { opcion: 'basico', situacion: 'compro' },
+                    neopreno: { opcion: 'entrada', situacion: 'compro' },
+                    mono: { opcion: 'entrada', situacion: 'compro' },
+                    rodillo: { opcion: 'interactivo', situacion: 'no_uso' },
+                    reloj: { opcion: 'entrada', situacion: 'compro' },
+                    maleta: { situacion: 'no_uso' }
+                }
+            },
+            triatleta: {
+                label: 'Ya hago triatlón',
+                descripcion: 'Vengo de distancias cortas y subo a larga.',
+                material: {
+                    bici: { opcion: 'carretera_nueva', situacion: 'tengo' },
+                    acoples: { opcion: 'basicos', situacion: 'compro' },
+                    estudio: { opcion: 'basico', situacion: 'compro' },
+                    ruedas: { situacion: 'no_uso' },
+                    potenciometro: { opcion: 'unilateral', situacion: 'no_uso' },
+                    casco: { opcion: 'ruta', situacion: 'tengo' },
+                    pedales_zapatillas: { opcion: 'basico', situacion: 'tengo' },
+                    neopreno: { opcion: 'entrada', situacion: 'tengo' },
+                    mono: { opcion: 'entrada', situacion: 'compro' },
+                    rodillo: { opcion: 'interactivo', situacion: 'tengo' },
+                    reloj: { opcion: 'entrada', situacion: 'tengo' },
+                    maleta: { opcion: 'blanda', situacion: 'no_uso' }
+                }
+            },
+            veterano: {
+                label: 'Lo tengo casi todo',
+                descripcion: 'No es mi primer larga distancia.',
+                material: {
+                    bici: { opcion: 'tt_media', situacion: 'tengo' },
+                    acoples: { situacion: 'no_uso' },
+                    estudio: { opcion: 'basico', situacion: 'tengo' },
+                    ruedas: { opcion: 'carbono', situacion: 'tengo' },
+                    potenciometro: { opcion: 'unilateral', situacion: 'tengo' },
+                    casco: { opcion: 'aero', situacion: 'tengo' },
+                    pedales_zapatillas: { opcion: 'medio', situacion: 'tengo' },
+                    neopreno: { opcion: 'medio', situacion: 'tengo' },
+                    mono: { opcion: 'medio', situacion: 'tengo' },
+                    rodillo: { opcion: 'interactivo', situacion: 'tengo' },
+                    reloj: { opcion: 'medio', situacion: 'tengo' },
+                    maleta: { opcion: 'rigida', situacion: 'tengo' }
+                }
+            }
+        },
+
+        situaciones: [
+            { id: 'tengo', label: 'Ya lo tengo' },
+            { id: 'compro', label: 'Lo compro' },
+            { id: 'alquilo', label: 'Lo alquilo' },
+            { id: 'no_uso', label: 'No lo uso' }
+        ],
+
+        margen_imprevistos_pct: 10
+    };
+
+    root.ICC_DATA = DATA;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/**
+ * Calculadora de coste real IRONMAN — motor de cálculo.
+ *
+ * Sin números dentro: todo sale de ICC_DATA y de lo que elige el usuario.
+ * Devuelve siempre tres escenarios (min, central, max) porque dar una cifra
+ * cerrada en esto es engañar.
+ *
+ * Dos totales distintos, y la diferencia es el punto de toda la calculadora:
+ *   - desembolso: el dinero que sale de la cuenta esta temporada.
+ *   - anual: el coste real de la temporada, con el material duradero
+ *     amortizado entre las temporadas que va a durar y descontando lo que
+ *     recuperarías vendiéndolo.
+ */
+(function (root) {
+    'use strict';
+
+    /* ---------------------------------------------------------------- utils */
+
+    function tri(rango) {
+        if (typeof rango === 'number') return { min: rango, central: rango, max: rango };
+        var min = rango[0], max = rango[1];
+        return { min: min, central: (min + max) / 2, max: max };
+    }
+
+    function fijo(valor) {
+        var n = Number(valor) || 0;
+        return { min: n, central: n, max: n };
+    }
+
+    function escala(t, factor) {
+        return { min: t.min * factor, central: t.central * factor, max: t.max * factor };
+    }
+
+    function suma() {
+        var out = { min: 0, central: 0, max: 0 };
+        for (var i = 0; i < arguments.length; i++) {
+            var t = arguments[i];
+            if (!t) continue;
+            out.min += t.min; out.central += t.central; out.max += t.max;
+        }
+        return out;
+    }
+
+    var CERO = { min: 0, central: 0, max: 0 };
+
+    /** Amortización: (precio - valor residual) / temporadas de vida. */
+    function amortizar(precio, vidaTemporadas, residual) {
+        var vida = Math.max(1, Number(vidaTemporadas) || 1);
+        var res = Math.min(0.9, Math.max(0, Number(residual) || 0));
+        return escala(precio, (1 - res) / vida);
+    }
+
+    /* ------------------------------------------------------- 1. duraderos */
+
+    function calcularEquipo(input, data) {
+        var partidas = [];
+
+        data.equipo.forEach(function (item) {
+            var sel = (input.material && input.material[item.id]) || item.defecto || {};
+            var situacion = sel.situacion || 'no_uso';
+            if (situacion === 'no_uso') return;
+
+            var opcion = null;
+            for (var i = 0; i < item.opciones.length; i++) {
+                if (item.opciones[i].id === (sel.opcion || (item.defecto && item.defecto.opcion))) {
+                    opcion = item.opciones[i];
+                }
+            }
+            if (!opcion) opcion = item.opciones[0];
+
+            var desembolso = CERO, anual = CERO, detalle = '';
+
+            if (situacion === 'compro') {
+                var precio = tri(opcion.precio);
+                desembolso = precio;
+                anual = amortizar(precio, item.vida_temporadas, item.residual);
+                detalle = 'Pagas ahora ' + opcion.label.toLowerCase() + '. Amortizado en ' +
+                    item.vida_temporadas + ' temporadas, descontando el ' +
+                    Math.round((item.residual || 0) * 100) + ' % que recuperarías de segunda mano.';
+            } else if (situacion === 'tengo') {
+                var precioT = tri(opcion.precio);
+                desembolso = CERO;
+                anual = amortizar(precioT, item.vida_temporadas, item.residual);
+                detalle = 'Ya lo tienes, así que no sale dinero de la cuenta, pero se gasta: cuenta ' +
+                    'su parte de esta temporada.';
+            } else if (situacion === 'alquilo') {
+                var alq = tri(item.alquiler || [0, 0]);
+                desembolso = alq;
+                anual = alq;
+                detalle = 'Alquiler por ' + (item.alquiler_unidad || 'temporada') + '.';
+            }
+
+            partidas.push({
+                id: item.id,
+                label: item.label,
+                grupo: 'material',
+                situacion: situacion,
+                opcion: opcion.label,
+                desembolso: desembolso,
+                anual: anual,
+                detalle: detalle,
+                nota: item.nota || '',
+                fuente: item.fuente,
+                fecha: item.fecha,
+                fiabilidad: item.fiabilidad
+            });
+        });
+
+        return partidas;
+    }
+
+    /* ----------------------------------------------------- 2. consumibles */
+
+    function calcularConsumibles(input, data) {
+        var c = data.consumibles;
+        var v = input.volumen;
+        var partidas = [];
+
+        // Zapatillas de entrenamiento: las marca el kilometraje y el peso.
+        var vidaKm = c.zapatillas.vida_km;
+        var pen = c.zapatillas.penalizacion_peso;
+        if (pen && v.peso >= pen.desde_kg) vidaKm = vidaKm * pen.factor;
+        var vidaRango = c.zapatillas.vida_km_rango || [vidaKm, vidaKm];
+        var paresMin = v.km_run / Math.max(1, vidaRango[1]);
+        var paresMax = v.km_run / Math.max(1, vidaRango[0]);
+        var paresCentral = v.km_run / Math.max(1, vidaKm);
+        var precioZap = tri(c.zapatillas.precio);
+        partidas.push({
+            id: 'zapatillas',
+            label: c.zapatillas.label,
+            grupo: 'consumibles',
+            desembolso: { min: paresMin * precioZap.min, central: paresCentral * precioZap.central, max: paresMax * precioZap.max },
+            anual: { min: paresMin * precioZap.min, central: paresCentral * precioZap.central, max: paresMax * precioZap.max },
+            detalle: Math.round(paresCentral * 10) / 10 + ' pares al año: ' + v.km_run +
+                ' km de carrera y ' + Math.round(vidaKm) + ' km de vida por par' +
+                (pen && v.peso >= pen.desde_kg ? ' (ajustado por peso)' : '') + '.',
+            fuente: c.zapatillas.fuente,
+            fecha: c.zapatillas.fecha,
+            fiabilidad: c.zapatillas.fiabilidad
+        });
+
+        // Zapatillas de competición, solo si las usa.
+        if (input.consumibles && input.consumibles.zapatillas_carrera) {
+            var precioComp = tri(c.zapatillas_carrera.precio);
+            partidas.push({
+                id: 'zapatillas_carrera',
+                label: c.zapatillas_carrera.label,
+                grupo: 'consumibles',
+                desembolso: precioComp,
+                anual: precioComp,
+                detalle: 'Un par por temporada: se agotan en torno a los ' + c.zapatillas_carrera.vida_km + ' km.',
+                fuente: c.zapatillas_carrera.fuente,
+                fecha: c.zapatillas_carrera.fecha,
+                fiabilidad: c.zapatillas_carrera.fiabilidad
+            });
+        }
+
+        // Transmisión y cubiertas: por kilómetro de bici.
+        var cadenasCentral = v.km_bici / c.cadena.vida_km;
+        var cadenaRango = c.cadena.vida_km_rango || [c.cadena.vida_km, c.cadena.vida_km];
+        var precioCadena = tri(c.cadena.precio);
+        var cadenaCoste = {
+            min: (v.km_bici / cadenaRango[1]) * precioCadena.min,
+            central: cadenasCentral * precioCadena.central,
+            max: (v.km_bici / cadenaRango[0]) * precioCadena.max
+        };
+        var precioCassette = tri(c.cassette.precio);
+        var cassetteCoste = escala(precioCassette, cadenasCentral / c.cassette.cada_n_cadenas);
+        var cubRango = c.cubiertas.vida_km_rango || [c.cubiertas.vida_km, c.cubiertas.vida_km];
+        var precioCub = escala(tri(c.cubiertas.precio), c.cubiertas.unidades);
+        var cubCoste = {
+            min: (v.km_bici / cubRango[1]) * precioCub.min,
+            central: (v.km_bici / c.cubiertas.vida_km) * precioCub.central,
+            max: (v.km_bici / cubRango[0]) * precioCub.max
+        };
+        var fungibles = tri(c.fungibles_bici.precio_anual);
+        var taller = escala(tri(c.taller.precio), c.taller.veces_anio);
+
+        partidas.push({
+            id: 'transmision',
+            label: 'Transmisión, cubiertas y fungibles de la bici',
+            grupo: 'consumibles',
+            desembolso: suma(cadenaCoste, cassetteCoste, cubCoste, fungibles),
+            anual: suma(cadenaCoste, cassetteCoste, cubCoste, fungibles),
+            detalle: Math.round(cadenasCentral * 10) / 10 + ' cadenas y ' +
+                (Math.round((v.km_bici / c.cubiertas.vida_km) * 10) / 10) + ' juegos de cubiertas para ' +
+                v.km_bici + ' km de bici al año.',
+            fuente: c.cadena.fuente + ' ' + c.cubiertas.fuente,
+            fecha: c.cadena.fecha,
+            fiabilidad: 'contrastado'
+        });
+
+        partidas.push({
+            id: 'taller',
+            label: c.taller.label,
+            grupo: 'consumibles',
+            desembolso: taller,
+            anual: taller,
+            detalle: c.taller.veces_anio + ' revisiones al año. ' + (c.taller.nota || ''),
+            fuente: c.taller.fuente,
+            fecha: c.taller.fecha,
+            fiabilidad: c.taller.fiabilidad
+        });
+
+        // Nutrición: gramos de hidratos por hora de sesión larga + día de carrera.
+        var n = c.nutricion;
+        var tipo = (input.consumibles && input.consumibles.nutricion_tipo) || 'mixto';
+        var precioG = tri(n.precio_g[tipo] || n.precio_g.mixto);
+        var horasLargasAnio = v.horas_largas_semana * input.prueba.semanas;
+        var gramosRango = n.g_hidratos_hora_rango || [n.g_hidratos_hora, n.g_hidratos_hora];
+        var gramosEntreno = {
+            min: horasLargasAnio * gramosRango[0],
+            central: horasLargasAnio * n.g_hidratos_hora,
+            max: horasLargasAnio * gramosRango[1]
+        };
+        var horasCarrera = input.prueba.horas_carrera;
+        var gramosCarrera = {
+            min: horasCarrera * gramosRango[0],
+            central: horasCarrera * n.g_hidratos_hora,
+            max: horasCarrera * gramosRango[1]
+        };
+        var nutriEntreno = {
+            min: gramosEntreno.min * precioG.min,
+            central: gramosEntreno.central * precioG.central,
+            max: gramosEntreno.max * precioG.max
+        };
+        var nutriCarrera = {
+            min: gramosCarrera.min * precioG.min,
+            central: gramosCarrera.central * precioG.central,
+            max: gramosCarrera.max * precioG.max
+        };
+
+        partidas.push({
+            id: 'nutricion',
+            label: n.label + ' (entrenos)',
+            grupo: 'consumibles',
+            desembolso: nutriEntreno,
+            anual: nutriEntreno,
+            detalle: Math.round(horasLargasAnio) + ' horas de sesión larga a ' + n.g_hidratos_hora +
+                ' g de hidratos por hora. ' + (n.etiquetas[tipo] || ''),
+            nota: n.nota,
+            fuente: n.fuente,
+            fecha: n.fecha,
+            fiabilidad: n.fiabilidad
+        });
+
+        partidas.push({
+            id: 'nutricion_carrera',
+            label: n.label + ' (día de carrera)',
+            grupo: 'evento',
+            desembolso: nutriCarrera,
+            anual: nutriCarrera,
+            detalle: 'Unas ' + horasCarrera + ' horas de carrera a ' + n.g_hidratos_hora + ' g/h.',
+            fuente: n.fuente,
+            fecha: n.fecha,
+            fiabilidad: n.fiabilidad
+        });
+
+        // Piscina.
+        var nat = c.natacion;
+        var meses = input.prueba.semanas / 4.33;
+        var costeNat;
+        var detalleNat;
+        if (input.recurrentes && input.recurrentes.natacion_modo === 'entrada') {
+            var sesiones = (input.recurrentes.sesiones_natacion_semana || 2) * input.prueba.semanas;
+            costeNat = escala(tri(nat.entrada), sesiones);
+            detalleNat = Math.round(sesiones) + ' entradas de piscina.';
+        } else if (input.recurrentes && input.recurrentes.natacion_modo === 'ninguno') {
+            costeNat = CERO;
+            detalleNat = 'Sin gasto de piscina.';
+        } else {
+            costeNat = escala(tri(nat.abono_mes), meses);
+            detalleNat = Math.round(meses) + ' meses de abono.';
+        }
+        var fungibleNat = tri(nat.fungible_anual);
+        partidas.push({
+            id: 'natacion',
+            label: nat.label,
+            grupo: 'entreno',
+            desembolso: suma(costeNat, fungibleNat),
+            anual: suma(costeNat, fungibleNat),
+            detalle: detalleNat + ' ' + nat.fungible_nota,
+            fuente: nat.fuente,
+            fecha: nat.fecha,
+            fiabilidad: nat.fiabilidad
+        });
+
+        return partidas;
+    }
+
+    /* ----------------------------------------------------- 3. recurrentes */
+
+    function calcularRecurrentes(input, data) {
+        var r = data.recurrentes;
+        var inp = input.recurrentes || {};
+        var meses = input.prueba.semanas / 4.33;
+        var partidas = [];
+
+        if (inp.entrenador !== 'no') {
+            var tarifa = inp.entrenador === 'premium' ? tri(r.entrenador.mes_premium) : tri(r.entrenador.mes);
+            partidas.push({
+                id: 'entrenador',
+                label: r.entrenador.label,
+                grupo: 'entreno',
+                desembolso: escala(tarifa, meses),
+                anual: escala(tarifa, meses),
+                detalle: Math.round(meses) + ' meses de cuota durante la preparación.',
+                fuente: r.entrenador.fuente,
+                fecha: r.entrenador.fecha,
+                fiabilidad: r.entrenador.fiabilidad
+            });
+        }
+
+        var sesionesFisio = inp.fisio_sesiones !== undefined ? inp.fisio_sesiones : r.fisio.sesiones_anio;
+        if (sesionesFisio > 0) {
+            partidas.push({
+                id: 'fisio',
+                label: r.fisio.label,
+                grupo: 'entreno',
+                desembolso: escala(tri(r.fisio.sesion), sesionesFisio),
+                anual: escala(tri(r.fisio.sesion), sesionesFisio),
+                detalle: sesionesFisio + ' sesiones durante la temporada. Si aparece una lesión, suben.',
+                fuente: r.fisio.fuente,
+                fecha: r.fisio.fecha,
+                fiabilidad: r.fisio.fiabilidad
+            });
+        }
+
+        if (inp.licencia === 'anual') {
+            partidas.push({
+                id: 'licencia',
+                label: r.licencia.label,
+                grupo: 'evento',
+                desembolso: tri(r.licencia.precio),
+                anual: tri(r.licencia.precio),
+                detalle: 'Licencia federativa de la temporada.',
+                fuente: r.licencia.fuente,
+                fecha: r.licencia.fecha,
+                fiabilidad: r.licencia.fiabilidad
+            });
+        } else if (inp.licencia === 'dia') {
+            partidas.push({
+                id: 'licencia',
+                label: r.licencia.alternativa_label,
+                grupo: 'evento',
+                desembolso: tri(r.licencia.alternativa_dia),
+                anual: tri(r.licencia.alternativa_dia),
+                detalle: 'El gasto pequeño que casi nadie incluye en sus cuentas.',
+                fuente: r.licencia.fuente,
+                fecha: r.licencia.fecha,
+                fiabilidad: r.licencia.fiabilidad
+            });
+        }
+
+        if (inp.club) {
+            partidas.push({
+                id: 'club', label: r.club.label, grupo: 'entreno',
+                desembolso: tri(r.club.precio_anual), anual: tri(r.club.precio_anual),
+                detalle: 'Cuota anual.', fuente: r.club.fuente, fecha: r.club.fecha, fiabilidad: r.club.fiabilidad
+            });
+        }
+
+        if (inp.suscripciones) {
+            partidas.push({
+                id: 'suscripciones', label: r.suscripciones.label, grupo: 'entreno',
+                desembolso: escala(tri(r.suscripciones.mes), 12), anual: escala(tri(r.suscripciones.mes), 12),
+                detalle: '12 meses de suscripción.', fuente: r.suscripciones.fuente,
+                fecha: r.suscripciones.fecha, fiabilidad: r.suscripciones.fiabilidad
+            });
+        }
+
+        if (inp.seguro_bici) {
+            partidas.push({
+                id: 'seguro_bici', label: r.seguro_bici.label, grupo: 'material',
+                desembolso: tri(r.seguro_bici.precio_anual), anual: tri(r.seguro_bici.precio_anual),
+                detalle: 'Prima anual.', fuente: r.seguro_bici.fuente,
+                fecha: r.seguro_bici.fecha, fiabilidad: r.seguro_bici.fiabilidad
+            });
+        }
+
+        return partidas;
+    }
+
+    /* ------------------------------------------------- 4. prueba y viaje */
+
+    function calcularEvento(input, data) {
+        var e = data.evento;
+        var p = input.prueba;
+        var vj = input.viaje || {};
+        var partidas = [];
+
+        // Inscripción: lo que paga el usuario, o la media publicada si no lo sabe.
+        var base = p.inscripcion ? fijo(p.inscripcion) : tri(e.inscripcion[p.distancia].precio);
+        var gestionPct = (p.gestion_pct !== undefined ? p.gestion_pct : e.inscripcion.gestion_pct) / 100;
+        partidas.push({
+            id: 'inscripcion',
+            label: 'Inscripción',
+            grupo: 'evento',
+            desembolso: escala(base, 1 + gestionPct),
+            anual: escala(base, 1 + gestionPct),
+            detalle: p.inscripcion
+                ? 'Dorsal de ' + p.inscripcion + ' € más ' + Math.round(gestionPct * 100) + ' % de gastos de gestión.'
+                : 'Sin precio concreto: se usa la horquilla publicada para la distancia, más gastos de gestión.',
+            nota: e.inscripcion.nota,
+            fuente: e.inscripcion.fuente,
+            fecha: e.inscripcion.fecha,
+            fiabilidad: e.inscripcion.fiabilidad
+        });
+
+        // Desplazamiento.
+        var v = e.viaje;
+        if (vj.modo === 'coche') {
+            var km = (vj.km_coche || 0) * 2;
+            var coste = fijo(km * v.coche_eur_km + (vj.peajes || 0) * 2);
+            partidas.push({
+                id: 'desplazamiento', label: 'Desplazamiento en coche', grupo: 'viaje',
+                desembolso: coste, anual: coste,
+                detalle: km + ' km ida y vuelta a ' + v.coche_eur_km + ' €/km, más peajes.',
+                fuente: v.coche_fuente, fecha: v.fecha, fiabilidad: v.fiabilidad
+            });
+        } else if (vj.modo === 'avion') {
+            var billete = vj.billete ? fijo(vj.billete) : tri(v.billete_avion);
+            var billetes = escala(billete, 1 + (vj.acompanantes || 0));
+            var tasa = escala(vj.tasa_bici ? fijo(vj.tasa_bici) : tri(v.tasa_bici_trayecto), 2);
+            partidas.push({
+                id: 'desplazamiento', label: 'Vuelos y tasa de la bici', grupo: 'viaje',
+                desembolso: suma(billetes, tasa), anual: suma(billetes, tasa),
+                detalle: (1 + (vj.acompanantes || 0)) + ' billete(s) ida y vuelta más la bici como equipaje especial en los dos trayectos.',
+                fuente: v.tasa_bici_fuente, fecha: v.fecha, fiabilidad: v.fiabilidad
+            });
+        }
+
+        // Alojamiento.
+        var noches = vj.noches !== undefined ? vj.noches : v.noches_defecto;
+        if (noches > 0) {
+            var precioNoche = vj.precio_noche ? fijo(vj.precio_noche) : tri(v.noche);
+            var personas = Math.max(1, vj.personas_hab || 1);
+            var alojamiento = escala(precioNoche, noches / personas);
+            partidas.push({
+                id: 'alojamiento', label: 'Alojamiento', grupo: 'viaje',
+                desembolso: alojamiento, anual: alojamiento,
+                detalle: noches + ' noches' + (personas > 1 ? ', dividiendo entre ' + personas + ' personas' : '') + '. ' + v.noches_nota,
+                fuente: 'Precios de hotel en fin de semana de prueba.', fecha: v.fecha, fiabilidad: v.fiabilidad
+            });
+        }
+
+        // Dietas y extras.
+        var dias = vj.dias !== undefined ? vj.dias : noches + 1;
+        if (dias > 0) {
+            var dietas = escala(tri(v.dietas_dia), dias * (1 + (vj.acompanantes || 0)));
+            partidas.push({
+                id: 'dietas', label: 'Comidas del viaje', grupo: 'viaje',
+                desembolso: dietas, anual: dietas,
+                detalle: dias + ' días' + ((vj.acompanantes || 0) ? ' por ' + (1 + vj.acompanantes) + ' personas' : '') + '.',
+                fuente: 'Estimación de gasto diario en destino.', fecha: v.fecha, fiabilidad: v.fiabilidad
+            });
+        }
+
+        if (vj.extras !== false) {
+            var extras = vj.extras_eur ? fijo(vj.extras_eur) : tri(v.extras);
+            partidas.push({
+                id: 'extras', label: 'Extras del fin de semana', grupo: 'viaje',
+                desembolso: extras, anual: extras,
+                detalle: v.extras_nota, fuente: 'Estimación.', fecha: v.fecha, fiabilidad: 'estimacion'
+            });
+        }
+
+        return partidas;
+    }
+
+    /* -------------------------------------------------------- 5. agregado */
+
+    function calcular(input, data) {
+        data = data || root.ICC_DATA;
+
+        var partidas = []
+            .concat(calcularEquipo(input, data))
+            .concat(calcularConsumibles(input, data))
+            .concat(calcularRecurrentes(input, data))
+            .concat(calcularEvento(input, data));
+
+        var desembolso = suma.apply(null, partidas.map(function (p) { return p.desembolso; }));
+        var anual = suma.apply(null, partidas.map(function (p) { return p.anual; }));
+
+        var margen = (input.margen_pct !== undefined ? input.margen_pct : data.margen_imprevistos_pct) / 100;
+        var desembolsoConMargen = escala(desembolso, 1 + margen);
+        var anualConMargen = escala(anual, 1 + margen);
+
+        // Por grupos, sobre el coste anual (el honesto).
+        var grupos = {};
+        partidas.forEach(function (p) {
+            if (!grupos[p.grupo]) grupos[p.grupo] = { desembolso: CERO, anual: CERO };
+            grupos[p.grupo] = {
+                desembolso: suma(grupos[p.grupo].desembolso, p.desembolso),
+                anual: suma(grupos[p.grupo].anual, p.anual)
+            };
+        });
+
+        var evento = partidas.filter(function (p) { return p.grupo === 'evento' || p.grupo === 'viaje'; });
+        var costeEvento = suma.apply(null, evento.map(function (p) { return p.anual; }));
+        var inscripcion = partidas.filter(function (p) { return p.id === 'inscripcion'; })[0];
+
+        var horasAnio = input.volumen.horas_semana * input.prueba.semanas;
+        var kmTotales = input.volumen.km_bici + input.volumen.km_run + input.volumen.km_swim;
+
+        return {
+            partidas: partidas,
+            grupos: grupos,
+            totales: {
+                desembolso: desembolsoConMargen,
+                anual: anualConMargen,
+                evento: costeEvento,
+                margen_pct: margen * 100
+            },
+            metricas: {
+                coste_hora: anualConMargen.central / Math.max(1, horasAnio),
+                coste_km: anualConMargen.central / Math.max(1, kmTotales),
+                horas_anio: horasAnio,
+                km_totales: kmTotales,
+                pct_inscripcion: inscripcion ? (inscripcion.anual.central / Math.max(1, anualConMargen.central)) * 100 : 0,
+                inscripcion: inscripcion ? inscripcion.anual.central : 0,
+                coste_mes: anualConMargen.central / Math.max(1, input.prueba.semanas / 4.33)
+            }
+        };
+    }
+
+    root.ICC_ENGINE = {
+        calcular: calcular,
+        tri: tri,
+        amortizar: amortizar,
+        suma: suma
+    };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/**
+ * Calculadora de coste real IRONMAN — interfaz.
+ *
+ * Monta el formulario a partir de ICC_DATA (no hay markup duplicado en PHP),
+ * recalcula en cada cambio y deja el resumen listo para enviar por WhatsApp.
+ *
+ * Uso: <div class="icc" data-whatsapp="34600000000"></div>
+ */
+(function (root, doc) {
+    'use strict';
+
+    var DATA, ENGINE;
+
+    var eur = function (n) {
+        // useGrouping 'always': en es-ES el separador de miles se omite por
+        // defecto en cifras de cuatro dígitos y queda incoherente (5542 € junto
+        // a 12.501 €).
+        return new Intl.NumberFormat('es-ES', {
+            style: 'currency', currency: 'EUR', maximumFractionDigits: 0, useGrouping: 'always'
+        }).format(Math.round(n));
+    };
+    var num = function (n, dec) {
+        return new Intl.NumberFormat('es-ES', { maximumFractionDigits: dec === undefined ? 0 : dec }).format(n);
+    };
+    var esc = function (s) {
+        return String(s === undefined || s === null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    };
+
+    var GRUPOS = {
+        material: 'Material',
+        consumibles: 'Consumibles',
+        entreno: 'Entrenamiento',
+        evento: 'La prueba',
+        viaje: 'Viaje y alojamiento'
+    };
+
+    /* --------------------------------------------------------- estado */
+
+    function estadoInicial() {
+        var vol = DATA.volumen.full;
+        var material = {};
+        DATA.equipo.forEach(function (item) {
+            material[item.id] = {
+                opcion: (item.defecto && item.defecto.opcion) || item.opciones[0].id,
+                situacion: (item.defecto && item.defecto.situacion) || 'no_uso'
+            };
+        });
+        return {
+            perfil: '',
+            prueba: { distancia: 'full', inscripcion: null, gestion_pct: DATA.evento.inscripcion.gestion_pct, semanas: vol.semanas, horas_carrera: 12 },
+            volumen: { horas_semana: vol.horas_semana, km_bici: vol.km_bici, km_run: vol.km_run, km_swim: vol.km_swim, horas_largas_semana: vol.horas_largas_semana, peso: 75 },
+            material: material,
+            consumibles: { nutricion_tipo: 'mixto', zapatillas_carrera: false },
+            recurrentes: { entrenador: 'si', fisio_sesiones: DATA.recurrentes.fisio.sesiones_anio, licencia: 'anual', natacion_modo: 'abono', sesiones_natacion_semana: 2, club: false, suscripciones: false, seguro_bici: false },
+            viaje: { modo: 'coche', km_coche: 300, peajes: 0, billete: null, tasa_bici: null, noches: DATA.evento.viaje.noches_defecto, precio_noche: null, personas_hab: 2, dias: 4, acompanantes: 1, extras: true },
+            margen_pct: DATA.margen_imprevistos_pct
+        };
+    }
+
+    /* --------------------------------------------------------- plantillas */
+
+    function campoNum(label, path, opts) {
+        opts = opts || {};
+        return '<label class="icc-f">' +
+            '<span class="icc-f__label">' + esc(label) +
+            (opts.ayuda ? '<span class="icc-f__help" title="' + esc(opts.ayuda) + '">?</span>' : '') + '</span>' +
+            '<span class="icc-f__input">' +
+            '<input type="number" data-path="' + path + '" min="' + (opts.min !== undefined ? opts.min : 0) + '"' +
+            (opts.max !== undefined ? ' max="' + opts.max + '"' : '') +
+            (opts.step ? ' step="' + opts.step + '"' : '') +
+            (opts.placeholder ? ' placeholder="' + esc(opts.placeholder) + '"' : '') + '>' +
+            (opts.sufijo ? '<span class="icc-f__suffix">' + esc(opts.sufijo) + '</span>' : '') +
+            '</span>' +
+            (opts.nota ? '<span class="icc-f__note">' + esc(opts.nota) + '</span>' : '') +
+            '</label>';
+    }
+
+    function campoSelect(label, path, opciones, opts) {
+        opts = opts || {};
+        return '<label class="icc-f">' +
+            '<span class="icc-f__label">' + esc(label) + '</span>' +
+            '<span class="icc-f__input"><select data-path="' + path + '">' +
+            opciones.map(function (o) {
+                return '<option value="' + esc(o.id) + '">' + esc(o.label) + '</option>';
+            }).join('') +
+            '</select></span>' +
+            (opts.nota ? '<span class="icc-f__note">' + esc(opts.nota) + '</span>' : '') +
+            '</label>';
+    }
+
+    function campoCheck(label, path) {
+        return '<label class="icc-check"><input type="checkbox" data-path="' + path + '"><span>' + esc(label) + '</span></label>';
+    }
+
+    function filaMaterial(item) {
+        var rango = item.opciones.map(function (o) { return o.precio[0]; }).reduce(function (a, b) { return Math.min(a, b); });
+        var rangoMax = item.opciones.map(function (o) { return o.precio[1]; }).reduce(function (a, b) { return Math.max(a, b); });
+        var situaciones = DATA.situaciones.filter(function (s) {
+            return s.id !== 'alquilo' || item.alquiler;
+        });
+        return '<div class="icc-mat" data-item="' + esc(item.id) + '">' +
+            '<div class="icc-mat__head">' +
+                '<span class="icc-mat__name">' + esc(item.label) + '</span>' +
+                '<span class="icc-mat__range">' + eur(rango) + ' – ' + eur(rangoMax) + '</span>' +
+            '</div>' +
+            (item.nota ? '<p class="icc-mat__note">' + esc(item.nota) + '</p>' : '') +
+            '<div class="icc-mat__controls">' +
+                '<select data-path="material.' + item.id + '.opcion">' +
+                    item.opciones.map(function (o) {
+                        return '<option value="' + esc(o.id) + '">' + esc(o.label) + ' · ' +
+                            num(o.precio[0]) + '–' + num(o.precio[1]) + ' €</option>';
+                    }).join('') +
+                '</select>' +
+                '<div class="icc-seg" data-seg="material.' + item.id + '.situacion">' +
+                    situaciones.map(function (s) {
+                        return '<button type="button" data-value="' + esc(s.id) + '">' + esc(s.label) + '</button>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+            '<div class="icc-mat__out"></div>' +
+        '</div>';
+    }
+
+    function render(host) {
+        var tel = host.getAttribute('data-whatsapp') || '';
+        host.innerHTML =
+        '<div class="icc-wrap">' +
+            '<form class="icc-form" novalidate>' +
+
+            /* 1. la prueba */
+            '<section class="icc-card">' +
+                '<h3 class="icc-card__title"><span>1</span> Tu prueba</h3>' +
+                '<div class="icc-grid">' +
+                    campoSelect('Distancia', 'prueba.distancia', [
+                        { id: 'full', label: 'IRONMAN completo (3,8 / 180 / 42,195)' },
+                        { id: 'medio', label: 'Medio IRONMAN (1,9 / 90 / 21,1)' }
+                    ]) +
+                    campoNum('Inscripción', 'prueba.inscripcion', { sufijo: '€', placeholder: 'No lo sé aún', nota: 'Si lo dejas vacío usamos la horquilla publicada para la distancia.' }) +
+                    campoNum('Gastos de gestión', 'prueba.gestion_pct', { sufijo: '%', step: 0.25, nota: 'Se cobran aparte del dorsal.' }) +
+                    campoNum('Semanas de preparación', 'prueba.semanas', { min: 4, max: 60 }) +
+                    campoNum('Horas que esperas tardar', 'prueba.horas_carrera', { min: 3, max: 17, sufijo: 'h', nota: 'Marca la nutrición del día de carrera.' }) +
+                '</div>' +
+            '</section>' +
+
+            /* 2. material */
+            '<section class="icc-card">' +
+                '<h3 class="icc-card__title"><span>2</span> Tu material</h3>' +
+                '<p class="icc-card__intro">Lo que ya tienes no sale de tu cuenta este año, pero se gasta: cuenta su parte de la temporada. Lo que compras lo repartimos entre las temporadas que va a durar, descontando lo que recuperarías vendiéndolo.</p>' +
+                '<div class="icc-perfiles">' +
+                    Object.keys(DATA.perfiles).map(function (k) {
+                        var p = DATA.perfiles[k];
+                        return '<button type="button" class="icc-perfil" data-perfil="' + esc(k) + '">' +
+                            '<strong>' + esc(p.label) + '</strong><span>' + esc(p.descripcion) + '</span></button>';
+                    }).join('') +
+                '</div>' +
+                '<div class="icc-mats">' + DATA.equipo.map(filaMaterial).join('') + '</div>' +
+            '</section>' +
+
+            /* 3. temporada */
+            '<section class="icc-card">' +
+                '<h3 class="icc-card__title"><span>3</span> Tu temporada</h3>' +
+                '<div class="icc-grid">' +
+                    campoNum('Horas de entreno a la semana', 'volumen.horas_semana', { min: 3, max: 30, step: 0.5 }) +
+                    campoNum('Horas de sesión larga a la semana', 'volumen.horas_largas_semana', { min: 0, max: 20, step: 0.5, nota: 'Las que llevan geles y bebida.' }) +
+                    campoNum('Km de bici al año', 'volumen.km_bici', { step: 100 }) +
+                    campoNum('Km de carrera al año', 'volumen.km_run', { step: 50 }) +
+                    campoNum('Km de natación al año', 'volumen.km_swim', { step: 10 }) +
+                    campoNum('Tu peso', 'volumen.peso', { min: 40, max: 140, sufijo: 'kg', nota: 'Por encima de 85 kg las zapatillas duran menos.' }) +
+                    campoSelect('Nutrición', 'consumibles.nutricion_tipo', Object.keys(DATA.consumibles.nutricion.precio_g).map(function (k) {
+                        return { id: k, label: DATA.consumibles.nutricion.etiquetas[k] };
+                    })) +
+                    campoSelect('Entrenador', 'recurrentes.entrenador', [
+                        { id: 'si', label: 'Sí, cuota mensual' },
+                        { id: 'premium', label: 'Sí, seguimiento premium' },
+                        { id: 'no', label: 'No, me lo planifico yo' }
+                    ]) +
+                    campoNum('Sesiones de fisio al año', 'recurrentes.fisio_sesiones', { max: 60 }) +
+                    campoSelect('Licencia / seguro', 'recurrentes.licencia', [
+                        { id: 'anual', label: 'Licencia federativa anual' },
+                        { id: 'dia', label: 'Seguro de un día' },
+                        { id: 'no', label: 'Ninguno' }
+                    ]) +
+                    campoSelect('Piscina', 'recurrentes.natacion_modo', [
+                        { id: 'abono', label: 'Abono mensual' },
+                        { id: 'entrada', label: 'Entrada suelta' },
+                        { id: 'ninguno', label: 'Gratis / aguas abiertas' }
+                    ]) +
+                    campoNum('Sesiones de piscina a la semana', 'recurrentes.sesiones_natacion_semana', { max: 14, nota: 'Solo cuenta si pagas por entrada.' }) +
+                '</div>' +
+                '<div class="icc-checks">' +
+                    campoCheck('Zapatillas de competición con placa de carbono', 'consumibles.zapatillas_carrera') +
+                    campoCheck('Cuota de club', 'recurrentes.club') +
+                    campoCheck('Plataformas de entrenamiento (TrainingPeaks, Zwift…)', 'recurrentes.suscripciones') +
+                    campoCheck('Seguro de la bici', 'recurrentes.seguro_bici') +
+                '</div>' +
+            '</section>' +
+
+            /* 4. viaje */
+            '<section class="icc-card">' +
+                '<h3 class="icc-card__title"><span>4</span> El viaje</h3>' +
+                '<p class="icc-card__intro">Una prueba cerca de casa puede salir más barata que otra con una inscripción menor.</p>' +
+                '<div class="icc-grid">' +
+                    campoSelect('Cómo vas', 'viaje.modo', [
+                        { id: 'coche', label: 'En coche' },
+                        { id: 'avion', label: 'En avión' },
+                        { id: 'casa', label: 'Es en mi ciudad' }
+                    ]) +
+                    campoNum('Km de ida', 'viaje.km_coche', { step: 10, sufijo: 'km', nota: 'Se cuenta ida y vuelta a ' + DATA.evento.viaje.coche_eur_km + ' €/km.' }) +
+                    campoNum('Peajes (ida)', 'viaje.peajes', { sufijo: '€' }) +
+                    campoNum('Billete de avión (ida y vuelta)', 'viaje.billete', { sufijo: '€', placeholder: 'No lo sé' }) +
+                    campoNum('Tasa de la bici por trayecto', 'viaje.tasa_bici', { sufijo: '€', placeholder: 'No lo sé' }) +
+                    campoNum('Noches de hotel', 'viaje.noches', { max: 14 }) +
+                    campoNum('Precio por noche', 'viaje.precio_noche', { sufijo: '€', placeholder: 'No lo sé' }) +
+                    campoNum('Personas por habitación', 'viaje.personas_hab', { min: 1, max: 6 }) +
+                    campoNum('Días fuera', 'viaje.dias', { max: 14 }) +
+                    campoNum('Acompañantes', 'viaje.acompanantes', { max: 8, nota: 'Multiplican billetes y comidas.' }) +
+                '</div>' +
+                '<div class="icc-checks">' +
+                    campoCheck('Contar extras: fotos oficiales, ropa de la prueba, la cena de después', 'viaje.extras') +
+                '</div>' +
+            '</section>' +
+            '</form>' +
+
+            /* resultado */
+            '<aside class="icc-res">' +
+                '<div class="icc-res__inner">' +
+                    '<div class="icc-head">' +
+                        '<p class="icc-head__kicker">Lo que sale de tu cuenta esta temporada</p>' +
+                        '<p class="icc-head__big" data-out="desembolso">—</p>' +
+                        '<p class="icc-head__band" data-out="desembolso_band">—</p>' +
+                    '</div>' +
+                    '<div class="icc-head icc-head--alt">' +
+                        '<p class="icc-head__kicker">Coste real de la temporada <span class="icc-f__help" title="El material duradero reparte su precio entre las temporadas que va a durar, descontando lo que recuperarías vendiéndolo. Es lo que de verdad te cuesta el año, tengas la bici pagada o no.">?</span></p>' +
+                        '<p class="icc-head__big" data-out="anual">—</p>' +
+                        '<p class="icc-head__band" data-out="anual_band">—</p>' +
+                    '</div>' +
+                    '<ul class="icc-kpis">' +
+                        '<li><span data-out="kpi_evento">—</span><small>solo la prueba y el viaje</small></li>' +
+                        '<li><span data-out="kpi_pct">—</span><small>del total es la inscripción</small></li>' +
+                        '<li><span data-out="kpi_mes">—</span><small>al mes de preparación</small></li>' +
+                        '<li><span data-out="kpi_hora">—</span><small>por hora de entreno</small></li>' +
+                    '</ul>' +
+                    '<div class="icc-margen">' +
+                        '<label>Margen para imprevistos: <strong data-out="margen">10 %</strong>' +
+                        '<input type="range" min="0" max="30" step="1" data-path="margen_pct"></label>' +
+                    '</div>' +
+                    '<div class="icc-desglose" data-out="desglose"></div>' +
+                    '<div class="icc-acciones">' +
+                        (tel ? '<a class="icc-btn icc-btn--wa" data-out="wa" href="#" target="_blank" rel="noopener">Enviarme el desglose por WhatsApp</a>' : '') +
+                        '<button type="button" class="icc-btn icc-btn--ghost" data-action="copiar">Copiar el desglose</button>' +
+                    '</div>' +
+                    '<details class="icc-supuestos"><summary>Ver supuestos y fuentes</summary><div data-out="fuentes"></div></details>' +
+                    '<p class="icc-legal">Tabla de precios v' + esc(DATA.version) + ', actualizada en ' + esc(DATA.actualizado) + '. ' +
+                        'Los precios cambian cada temporada y de una prueba a otra: esto es una horquilla de trabajo, no un presupuesto cerrado. ' +
+                        'Para el número real, consulta el precio de tu prueba con fecha.</p>' +
+                '</div>' +
+            '</aside>' +
+        '</div>';
+    }
+
+    /* --------------------------------------------------------- binding */
+
+    function get(obj, path) {
+        return path.split('.').reduce(function (o, k) { return o === undefined || o === null ? o : o[k]; }, obj);
+    }
+    function set(obj, path, value) {
+        var keys = path.split('.');
+        var last = keys.pop();
+        var target = keys.reduce(function (o, k) { return o[k] = o[k] || {}; }, obj);
+        target[last] = value;
+    }
+
+    function sincronizarFormulario(host, estado) {
+        host.querySelectorAll('[data-path]').forEach(function (el) {
+            var v = get(estado, el.getAttribute('data-path'));
+            if (el.type === 'checkbox') {
+                el.checked = !!v;
+            } else if (el.type === 'number' || el.type === 'range') {
+                el.value = (v === null || v === undefined) ? '' : v;
+            } else {
+                el.value = v === null || v === undefined ? '' : v;
+            }
+        });
+        host.querySelectorAll('[data-seg]').forEach(function (seg) {
+            var v = get(estado, seg.getAttribute('data-seg'));
+            seg.querySelectorAll('button').forEach(function (b) {
+                b.classList.toggle('is-on', b.getAttribute('data-value') === v);
+            });
+        });
+        host.querySelectorAll('.icc-perfil').forEach(function (b) {
+            b.classList.toggle('is-on', b.getAttribute('data-perfil') === estado.perfil);
+        });
+
+        // Campos que solo aplican según el modo de viaje / piscina.
+        var modo = estado.viaje.modo;
+        ['viaje.km_coche', 'viaje.peajes'].forEach(function (p) { toggleCampo(host, p, modo === 'coche'); });
+        ['viaje.billete', 'viaje.tasa_bici'].forEach(function (p) { toggleCampo(host, p, modo === 'avion'); });
+        ['viaje.noches', 'viaje.precio_noche', 'viaje.personas_hab', 'viaje.dias', 'viaje.acompanantes'].forEach(function (p) {
+            toggleCampo(host, p, modo !== 'casa');
+        });
+        toggleCampo(host, 'recurrentes.sesiones_natacion_semana', estado.recurrentes.natacion_modo === 'entrada');
+    }
+
+    function toggleCampo(host, path, visible) {
+        var el = host.querySelector('[data-path="' + path + '"]');
+        if (!el) return;
+        var campo = el.closest('.icc-f');
+        if (campo) campo.style.display = visible ? '' : 'none';
+    }
+
+    function construirInput(estado) {
+        return {
+            prueba: estado.prueba,
+            volumen: estado.volumen,
+            material: estado.material,
+            consumibles: estado.consumibles,
+            recurrentes: estado.recurrentes,
+            viaje: {
+                modo: estado.viaje.modo,
+                km_coche: estado.viaje.km_coche,
+                peajes: estado.viaje.peajes,
+                billete: estado.viaje.billete,
+                tasa_bici: estado.viaje.tasa_bici,
+                noches: estado.viaje.modo === 'casa' ? 0 : estado.viaje.noches,
+                precio_noche: estado.viaje.precio_noche,
+                personas_hab: estado.viaje.personas_hab,
+                dias: estado.viaje.modo === 'casa' ? 0 : estado.viaje.dias,
+                acompanantes: estado.viaje.acompanantes,
+                extras: estado.viaje.extras,
+                extras_eur: null
+            },
+            margen_pct: estado.margen_pct
+        };
+    }
+
+    function pintar(host, estado) {
+        var r = ENGINE.calcular(construirInput(estado), DATA);
+        var out = function (k) { return host.querySelector('[data-out="' + k + '"]'); };
+
+        out('desembolso').textContent = eur(r.totales.desembolso.central);
+        out('desembolso_band').textContent = 'entre ' + eur(r.totales.desembolso.min) + ' y ' + eur(r.totales.desembolso.max);
+        out('anual').textContent = eur(r.totales.anual.central);
+        out('anual_band').textContent = 'entre ' + eur(r.totales.anual.min) + ' y ' + eur(r.totales.anual.max);
+        out('kpi_evento').textContent = eur(r.totales.evento.central);
+        out('kpi_pct').textContent = num(r.metricas.pct_inscripcion, 0) + ' %';
+        out('kpi_mes').textContent = eur(r.metricas.coste_mes);
+        out('kpi_hora').textContent = eur(r.metricas.coste_hora);
+        out('margen').textContent = num(estado.margen_pct) + ' %';
+
+        // Desglose por grupos.
+        var html = '';
+        Object.keys(GRUPOS).forEach(function (g) {
+            var items = r.partidas.filter(function (p) { return p.grupo === g; });
+            if (!items.length) return;
+            var totalG = ENGINE.suma.apply(null, items.map(function (p) { return p.anual; }));
+            var pct = (totalG.central / Math.max(1, r.totales.anual.central)) * 100;
+            html += '<div class="icc-grupo">' +
+                '<div class="icc-grupo__head">' +
+                    '<span>' + esc(GRUPOS[g]) + '</span>' +
+                    '<span class="icc-grupo__tot">' + eur(totalG.central) + '</span>' +
+                '</div>' +
+                '<div class="icc-bar"><i style="width:' + Math.min(100, pct).toFixed(1) + '%"></i></div>' +
+                '<table class="icc-tabla"><tbody>' +
+                items.sort(function (a, b) { return b.anual.central - a.anual.central; }).map(function (p) {
+                    var dif = Math.abs(p.desembolso.central - p.anual.central) > 1;
+                    return '<tr>' +
+                        '<th>' + esc(p.label) +
+                            (p.situacion === 'tengo' ? ' <em class="icc-tag">ya lo tienes</em>' : '') +
+                            (p.situacion === 'alquilo' ? ' <em class="icc-tag">alquiler</em>' : '') +
+                            '<span class="icc-tabla__det">' + esc(p.detalle) + '</span>' +
+                        '</th>' +
+                        '<td>' + eur(p.anual.central) +
+                            (dif ? '<span class="icc-tabla__alt">pagas ahora ' + eur(p.desembolso.central) + '</span>' : '') +
+                        '</td>' +
+                    '</tr>';
+                }).join('') +
+                '</tbody></table></div>';
+        });
+        out('desglose').innerHTML = html;
+
+        // Fuentes.
+        var vistas = {};
+        out('fuentes').innerHTML = '<ul class="icc-fuentes">' + r.partidas.map(function (p) {
+            if (!p.fuente || vistas[p.fuente]) return '';
+            vistas[p.fuente] = true;
+            return '<li><strong>' + esc(p.label) + '</strong> ' +
+                '<em class="icc-tag icc-tag--' + esc(p.fiabilidad || 'estimacion') + '">' +
+                (p.fiabilidad === 'contrastado' ? 'dato contrastado' : 'estimación') + '</em>' +
+                '<span>' + esc(p.fuente) + '</span>' +
+                '<small>Revisado: ' + esc(p.fecha) + '</small></li>';
+        }).join('') + '</ul>';
+
+        // Resumen de texto para WhatsApp y portapapeles.
+        var resumen = resumenTexto(r, estado);
+        host.__iccResumen = resumen;
+        var wa = out('wa');
+        if (wa) {
+            var tel = host.getAttribute('data-whatsapp').replace(/[^0-9]/g, '');
+            wa.href = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(resumen);
+        }
+
+        // Coste por material en cada fila.
+        r.partidas.forEach(function (p) {
+            var fila = host.querySelector('.icc-mat[data-item="' + p.id + '"] .icc-mat__out');
+            if (!fila) return;
+            fila.innerHTML = '<strong>' + eur(p.anual.central) + '</strong> esta temporada' +
+                (Math.abs(p.desembolso.central - p.anual.central) > 1
+                    ? ' · <span>' + eur(p.desembolso.central) + ' de desembolso ahora</span>' : '');
+        });
+        DATA.equipo.forEach(function (item) {
+            if (estado.material[item.id].situacion !== 'no_uso') return;
+            var fila = host.querySelector('.icc-mat[data-item="' + item.id + '"] .icc-mat__out');
+            if (fila) fila.innerHTML = '<span class="icc-mat__off">No lo cuentas</span>';
+        });
+    }
+
+    function resumenTexto(r, estado) {
+        var L = [];
+        L.push('Mi presupuesto para el ' + (estado.prueba.distancia === 'full' ? 'IRONMAN' : 'medio IRONMAN') + ':');
+        L.push('');
+        L.push('Sale de mi cuenta esta temporada: ' + eur(r.totales.desembolso.central) +
+            ' (entre ' + eur(r.totales.desembolso.min) + ' y ' + eur(r.totales.desembolso.max) + ')');
+        L.push('Coste real de la temporada, con el material amortizado: ' + eur(r.totales.anual.central));
+        L.push('Solo la prueba y el viaje: ' + eur(r.totales.evento.central));
+        L.push('La inscripción es el ' + num(r.metricas.pct_inscripcion, 0) + ' % del total.');
+        L.push('');
+        L.push('Por partidas (coste de la temporada):');
+        Object.keys(GRUPOS).forEach(function (g) {
+            var items = r.partidas.filter(function (p) { return p.grupo === g; });
+            if (!items.length) return;
+            var t = ENGINE.suma.apply(null, items.map(function (p) { return p.anual; }));
+            L.push('- ' + GRUPOS[g] + ': ' + eur(t.central));
+        });
+        L.push('');
+        L.push('Incluye un ' + num(estado.margen_pct) + ' % de margen para imprevistos.');
+        L.push('Calculado con ' + estado.prueba.semanas + ' semanas de preparación y ' +
+            num(r.metricas.horas_anio) + ' horas de entreno.');
+        return L.join('\n');
+    }
+
+    /* --------------------------------------------------------- arranque */
+
+    /** Mezcla profunda de objetos planos (los arrays se sustituyen enteros). */
+    function fusionar(destino, origen) {
+        Object.keys(origen).forEach(function (k) {
+            var v = origen[k];
+            if (v && typeof v === 'object' && !Array.isArray(v) && destino[k] && typeof destino[k] === 'object' && !Array.isArray(destino[k])) {
+                fusionar(destino[k], v);
+            } else {
+                destino[k] = v;
+            }
+        });
+    }
+
+    /**
+     * Sustituye la horquilla de una gama por el precio real de un producto
+     * concreto, scrapeado de la tienda. Formato:
+     * { 'bici.tt_media': { precio: 4299, modelo: '...', tienda: '...', fecha: '...' } }
+     */
+    function aplicarPreciosReales(data, precios) {
+        Object.keys(precios).forEach(function (clave) {
+            var ref = precios[clave];
+            if (!ref || !ref.precio) return;
+            var partes = clave.split('.');
+            data.equipo.forEach(function (item) {
+                if (item.id !== partes[0]) return;
+                item.opciones.forEach(function (op) {
+                    if (op.id !== partes[1]) return;
+                    op.precio = [ref.precio, ref.precio];
+                    if (ref.modelo) op.label = op.label + ' — ' + ref.modelo;
+                });
+                item.fuente = 'Precio real de ' + (ref.modelo || 'un modelo de referencia') +
+                    (ref.tienda ? ' en ' + ref.tienda : '') + ', leído automáticamente de la tienda.';
+                item.fecha = ref.fecha || item.fecha;
+                item.fiabilidad = 'contrastado';
+            });
+        });
+    }
+
+    function init(host) {
+        DATA = root.ICC_DATA;
+        ENGINE = root.ICC_ENGINE;
+        if (!DATA || !ENGINE) return;
+
+        // Sobreescrituras desde WordPress: ajustes del admin y precios reales
+        // scrapeados de tienda (ICC_CONFIG.precios), que mandan sobre la horquilla.
+        if (root.ICC_CONFIG) {
+            DATA = JSON.parse(JSON.stringify(DATA));
+            if (root.ICC_CONFIG.data) fusionar(DATA, root.ICC_CONFIG.data);
+            if (root.ICC_CONFIG.precios) aplicarPreciosReales(DATA, root.ICC_CONFIG.precios);
+        }
+
+        var estado = estadoInicial();
+        render(host);
+        sincronizarFormulario(host, estado);
+        pintar(host, estado);
+
+        host.addEventListener('input', function (e) {
+            var el = e.target;
+            var path = el.getAttribute && el.getAttribute('data-path');
+            if (!path) return;
+            var valor;
+            if (el.type === 'checkbox') {
+                valor = el.checked;
+            } else if (el.type === 'number' || el.type === 'range') {
+                valor = el.value === '' ? null : Number(el.value);
+            } else {
+                valor = el.value;
+            }
+            set(estado, path, valor);
+
+            // Cambiar de distancia recarga los volúmenes de referencia.
+            if (path === 'prueba.distancia') {
+                var vol = DATA.volumen[valor];
+                estado.volumen.horas_semana = vol.horas_semana;
+                estado.volumen.km_bici = vol.km_bici;
+                estado.volumen.km_run = vol.km_run;
+                estado.volumen.km_swim = vol.km_swim;
+                estado.volumen.horas_largas_semana = vol.horas_largas_semana;
+                estado.prueba.semanas = vol.semanas;
+                estado.prueba.horas_carrera = valor === 'full' ? 12 : 6;
+            }
+            sincronizarFormulario(host, estado);
+            pintar(host, estado);
+        });
+
+        host.addEventListener('change', function (e) {
+            if (e.target.tagName === 'SELECT') {
+                host.dispatchEvent(new Event('input'));
+                sincronizarFormulario(host, estado);
+                pintar(host, estado);
+            }
+        });
+
+        host.addEventListener('click', function (e) {
+            var seg = e.target.closest('.icc-seg button');
+            if (seg) {
+                set(estado, seg.parentNode.getAttribute('data-seg'), seg.getAttribute('data-value'));
+                estado.perfil = '';
+                sincronizarFormulario(host, estado);
+                pintar(host, estado);
+                return;
+            }
+            var perfil = e.target.closest('.icc-perfil');
+            if (perfil) {
+                var key = perfil.getAttribute('data-perfil');
+                var def = DATA.perfiles[key];
+                estado.perfil = key;
+                Object.keys(def.material).forEach(function (id) {
+                    if (!estado.material[id]) return;
+                    if (def.material[id].opcion) estado.material[id].opcion = def.material[id].opcion;
+                    estado.material[id].situacion = def.material[id].situacion;
+                });
+                sincronizarFormulario(host, estado);
+                pintar(host, estado);
+                return;
+            }
+            var copiar = e.target.closest('[data-action="copiar"]');
+            if (copiar) {
+                var txt = host.__iccResumen || '';
+                var done = function () {
+                    copiar.textContent = 'Copiado';
+                    setTimeout(function () { copiar.textContent = 'Copiar el desglose'; }, 1800);
+                };
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(txt).then(done, done);
+                } else {
+                    var ta = doc.createElement('textarea');
+                    ta.value = txt; doc.body.appendChild(ta); ta.select();
+                    doc.execCommand('copy'); doc.body.removeChild(ta); done();
+                }
+            }
+        });
+    }
+
+    function boot() {
+        doc.querySelectorAll('.icc').forEach(init);
+    }
+
+    if (doc.readyState === 'loading') {
+        doc.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+
+    root.ICC_UI = { init: init };
+})(window, document);
+
+</script>
