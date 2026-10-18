@@ -156,40 +156,42 @@ impacto grande en el total:
 
 ---
 
-## 7. Precios reales de referencia (y por qué esto no envejece)
+## 7. Qué hay que revisar cada temporada
 
-La fidelidad de una calculadora así se cae por el mismo sitio que la de
-cualquier artículo con precios: a los seis meses está desfasada. Por eso la
-tabla de datos es editable y, además, cada gama puede quedar sustituida por el
-**precio real de un producto concreto**, leído de la tienda:
+La calculadora envejece por donde envejece cualquier artículo con precios. Para
+que siga siendo fiable, una vez al año (o cuando cambie algo gordo) hay que
+revisar en `src/icc-data.js`:
 
-- En **Ajustes → Calculadora IRONMAN** se añaden filas con la partida
-  (`bici`), la gama (`tt_media`), el modelo, la URL de la tienda y la tienda.
-- El precio se lee con el scraper del plugin *Triathlon Price Comparator* y se
-  refresca a diario por cron.
-- Cuando hay precio real, la horquilla de esa gama se sustituye por él, la
-  fuente pasa a decir «precio real de X en Y» y la etiqueta sube a
-  `contrastado`.
-- Si el scraper no está activo o falla, se puede poner un precio manual, y si
-  tampoco hay precio manual, se sigue usando la horquilla estimada. La
-  calculadora nunca se queda sin número.
+- las horquillas de precio del material y su `fecha`,
+- la media y el rango de inscripción de la distancia,
+- las tarifas de avión con bici y el €/km del coche,
+- el precio por gramo de hidratos si cambian los geles de referencia.
 
-De paso, esas URLs son las mismas de afiliado que ya usa el comparador.
+Cada entrada lleva `fuente`, `fecha` y `fiabilidad`, y eso es lo que sale en
+«Ver supuestos y fuentes». Al cambiar un número, cambia también su fecha: es lo
+único que sostiene que el resultado sea honesto.
 
 ---
 
 ## 8. Ficheros
 
 ```
-ironman-cost-calculator.php      Bootstrap, cron de refresco de precios
-includes/class-icc-shortcode.php Shortcode [calculadora_ironman] y assets
-includes/class-icc-refs.php      Precios reales de referencia (scraper + manual)
-includes/class-icc-admin.php     Ajustes: WhatsApp, % gestión, €/km, referencias
-assets/js/icc-data.js            TODOS los precios, vidas útiles y consumos
-assets/js/icc-engine.js          Motor de cálculo (sin un solo número dentro)
-assets/js/icc-ui.js              Interfaz, se monta desde la tabla de datos
-assets/css/icc-frontend.css      Estilos (claro y oscuro)
+index.html                     Página autónoma para probar y compartir
+page-calculadora-ironman.php   Plantilla de página de WordPress (wp_head/wp_footer)
+build.py                       Genera las dos desde src/
+src/shell.html                 Hero, intro y punto de montaje de la calculadora
+src/icc-styles.css             Estilos (mismos tokens que la calculadora de sudoración)
+src/icc-data.js                TODOS los precios, vidas útiles y consumos, con fuentes
+src/icc-engine.js              Motor de cálculo (sin un solo número dentro)
+src/icc-ui.js                  Interfaz, montada desde la tabla de datos
+MODELO.md                      Este documento
 ```
 
-Uso: `[calculadora_ironman]`, o `[calculadora_ironman whatsapp="34600000000"]`
-para el botón de envío del desglose.
+Para generar las dos salidas, con el botón de WhatsApp apuntando a un número:
+
+```
+python3 build.py --whatsapp 34600000000
+```
+
+La plantilla se sube al tema (o al tema hijo), se crea una página y se le
+asigna la plantilla «Calculadora Coste IRONMAN», igual que la de sudoración.
